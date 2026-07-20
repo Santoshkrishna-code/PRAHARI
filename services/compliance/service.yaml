@@ -1,0 +1,38 @@
+service:
+  name: "compliance-service"
+  version: "1.0.0"
+  owner: "enterprise-governance-compliance-team"
+  description: "Enterprise Governance and Compliance Management Service managing statutory obligations, regulatory controls, standards audit findings, and certification trackers"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8095
+
+health:
+  readiness: true
+  liveness: true

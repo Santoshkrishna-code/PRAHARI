@@ -1,0 +1,38 @@
+service:
+  name: "maintenance-service"
+  version: "1.0.0"
+  owner: "reliability-operations-team"
+  description: "Enterprise Maintenance Management Service owning breakdown work orders, corrective/preventive planning scheduling, technicians assignments, spare parts usages, and plant downtime tracking"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8088
+
+health:
+  readiness: true
+  liveness: true

@@ -1,0 +1,38 @@
+service:
+  name: "incident-service"
+  version: "1.0.0"
+  owner: "safety-operations-team"
+  description: "Enterprise Incident Management Service owning the complete incident lifecycle including investigations, root cause analysis, and CAPA tracking"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8084
+
+health:
+  readiness: true
+  liveness: true

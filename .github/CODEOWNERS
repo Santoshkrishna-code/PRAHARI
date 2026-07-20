@@ -1,0 +1,20 @@
+# ==============================================================================
+# PRAHARI Monorepo CODEOWNERS Mapping
+# ==============================================================================
+
+# Global fallback owners
+*                                   @Santoshkrishna
+
+# Infrastructure / DevOps code ownership
+/infrastructure/terraform/          @Santoshkrishna
+/infrastructure/kubernetes/         @Santoshkrishna
+/infrastructure/helm/               @Santoshkrishna
+/.github/workflows/                 @Santoshkrishna
+
+# Python AI & CV Code ownership
+/ai/                                @Santoshkrishna
+/computer-vision/                   @Santoshkrishna
+
+# Go Services code ownership
+/services/                          @Santoshkrishna
+/shared/                            @Santoshkrishna

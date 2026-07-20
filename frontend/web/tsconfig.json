@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@prahari/tokens/*": ["../platform/packages/tokens/*"],
+      "@prahari/theme/*": ["../platform/packages/theme/*"],
+      "@prahari/components/*": ["../platform/packages/components/*"],
+      "@prahari/layouts/*": ["../platform/packages/layouts/*"],
+      "@prahari/navigation/*": ["../platform/packages/navigation/*"],
+      "@prahari/charts/*": ["../platform/packages/charts/*"],
+      "@prahari/utils/*": ["../platform/packages/utils/*"],
+      "@prahari/state/*": ["../platform/packages/state/*"]
+    }
+  },
+  "include": ["src"]
+}

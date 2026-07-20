@@ -1,0 +1,124 @@
+CREATE TABLE IF NOT EXISTS cameras (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    ip_address VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'OFFLINE',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS camera_streams (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    rtsp_url TEXT NOT NULL,
+    fps INTEGER NOT NULL DEFAULT 30,
+    resolution VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS models (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    task_type VARCHAR(50) NOT NULL,
+    version VARCHAR(50) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS model_versions (
+    id VARCHAR(50) PRIMARY KEY,
+    model_id VARCHAR(50) REFERENCES models(id),
+    version_tag VARCHAR(50) NOT NULL,
+    released_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS inference_jobs (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    model_id VARCHAR(50) REFERENCES models(id),
+    status VARCHAR(50) NOT NULL DEFAULT 'STOPPED',
+    fps_rate NUMERIC(5, 2) NOT NULL DEFAULT 30.00,
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS detections (
+    id VARCHAR(50) PRIMARY KEY,
+    job_id VARCHAR(50) REFERENCES inference_jobs(id),
+    label VARCHAR(100) NOT NULL,
+    confidence NUMERIC(5, 4) NOT NULL,
+    bbox TEXT NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tracked_objects (
+    id VARCHAR(50) PRIMARY KEY,
+    object_id VARCHAR(50) NOT NULL,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    x_val NUMERIC(10, 4) NOT NULL,
+    y_val NUMERIC(10, 4) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS zones (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    name VARCHAR(200) NOT NULL,
+    coordinates TEXT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS alerts (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    label VARCHAR(100) NOT NULL,
+    triggered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    snapshot_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS recordings (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    ended_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    file_url TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS snapshots (
+    id VARCHAR(50) PRIMARY KEY,
+    camera_id VARCHAR(50) REFERENCES cameras(id),
+    trigger_id VARCHAR(50) REFERENCES alerts(id),
+    captured_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    storage_path TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS deployments (
+    id VARCHAR(50) PRIMARY KEY,
+    edge_device VARCHAR(200) NOT NULL,
+    model_id VARCHAR(50) REFERENCES models(id),
+    version VARCHAR(50) NOT NULL,
+    deployed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS evaluations (
+    id VARCHAR(50) PRIMARY KEY,
+    model_id VARCHAR(50) REFERENCES models(id),
+    f1_score NUMERIC(5, 4) NOT NULL,
+    precision_rate NUMERIC(5, 4) NOT NULL,
+    recall_rate NUMERIC(5, 4) NOT NULL,
+    tested_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);
+
+CREATE TABLE IF NOT EXISTS metrics (
+    metric_key VARCHAR(100) PRIMARY KEY,
+    metric_value NUMERIC(15, 4) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

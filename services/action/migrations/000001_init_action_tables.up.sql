@@ -1,0 +1,126 @@
+CREATE TABLE IF NOT EXISTS actions (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    source_module VARCHAR(50) NOT NULL,
+    source_ref_id VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    action_type VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'CREATED',
+    assigned_to VARCHAR(50),
+    due_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    closed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS capas (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    source_module VARCHAR(50) NOT NULL,
+    source_ref_id VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'CREATED',
+    initiated_by VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS findings (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    source_module VARCHAR(50) NOT NULL,
+    source_ref_id VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    severity VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'OPEN',
+    detected_by VARCHAR(50) NOT NULL,
+    assigned_to VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS root_cause_analyses (
+    id VARCHAR(50) PRIMARY KEY,
+    capa_id VARCHAR(50) REFERENCES capas(id),
+    method VARCHAR(50) NOT NULL,
+    question TEXT NOT NULL DEFAULT '',
+    answer TEXT NOT NULL DEFAULT '',
+    depth_level INTEGER NOT NULL DEFAULT 0,
+    category VARCHAR(100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS action_plans (
+    id VARCHAR(50) PRIMARY KEY,
+    capa_id VARCHAR(50) REFERENCES capas(id),
+    approver_id VARCHAR(50),
+    approved_at TIMESTAMP WITH TIME ZONE,
+    target_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    description TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS effectiveness_reviews (
+    id VARCHAR(50) PRIMARY KEY,
+    capa_id VARCHAR(50) REFERENCES capas(id),
+    reviewed_by VARCHAR(50) NOT NULL,
+    reviewed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    effective BOOLEAN NOT NULL DEFAULT false,
+    notes TEXT,
+    next_check_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS escalation_rules (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    overdue_days INTEGER NOT NULL DEFAULT 7,
+    escalate_to_role VARCHAR(100) NOT NULL,
+    notify_email VARCHAR(200) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS attachments (
+    id VARCHAR(50) PRIMARY KEY,
+    target_type VARCHAR(50) NOT NULL,
+    target_id VARCHAR(50) NOT NULL,
+    file_name VARCHAR(200) NOT NULL,
+    file_url TEXT NOT NULL,
+    uploaded_by VARCHAR(50) NOT NULL,
+    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id VARCHAR(50) PRIMARY KEY,
+    target_type VARCHAR(50) NOT NULL,
+    target_id VARCHAR(50) NOT NULL,
+    author_id VARCHAR(50) NOT NULL,
+    body TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS timeline (
+    id VARCHAR(50) PRIMARY KEY,
+    record_id VARCHAR(50) NOT NULL,
+    event_type VARCHAR(100) NOT NULL,
+    event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    description TEXT,
+    metadata TEXT
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);
+
+CREATE TABLE IF NOT EXISTS metrics (
+    metric_key VARCHAR(100) PRIMARY KEY,
+    metric_value NUMERIC(15, 4) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,43 @@
+name: Infrastructure IaC CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure.yml'
+
+jobs:
+  terraform-ci:
+    name: Terraform Lint, Security & Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive infrastructure/terraform templates/terraform-template
+
+      - name: Run TFSec Security Scan
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working-directory: infrastructure/terraform
+
+      - name: Run Checkov Compliance Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infrastructure/terraform
+          framework: terraform
+          quiet: true
+          output_format: cli
+          soft_fail: false

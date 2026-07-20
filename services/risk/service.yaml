@@ -1,0 +1,38 @@
+service:
+  name: "risk-service"
+  version: "1.0.0"
+  owner: "operational-risk-intelligence-team"
+  description: "Enterprise Risk Assessment Management Service acting as the central intelligence analytical layer calculating inherent and residual risk matrices, bow-tie barriers, and reassessment evaluations"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8094
+
+health:
+  readiness: true
+  liveness: true

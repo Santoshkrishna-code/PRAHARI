@@ -1,0 +1,38 @@
+service:
+  name: "contractor-service"
+  version: "1.0.0"
+  owner: "workforce-compliance-team"
+  description: "Enterprise Contractor Management Service owning contractor organizations, worker profiles onboarding, certifications competency, safety training compliance, site gate access, and risk indicators"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8089
+
+health:
+  readiness: true
+  liveness: true

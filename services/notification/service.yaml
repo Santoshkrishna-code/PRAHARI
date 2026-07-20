@@ -1,0 +1,38 @@
+service:
+  name: "notification-service"
+  version: "1.0.0"
+  owner: "core-communications-team"
+  description: "Centralized messaging provider sending Emails, SMS, and Slack webhooks"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: false
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 2
+  port: 8083
+
+health:
+  readiness: true
+  liveness: true

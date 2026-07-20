@@ -1,0 +1,49 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches: [ develop ]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
+
+jobs:
+  deploy-development:
+    name: Build & Push to Dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, Tag, and Push Microservices to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          # Build each Go service and push to ECR
+          for service_path in services/*-service; do
+            service_name=$(basename $service_path)
+            docker build -t $ECR_REGISTRY/prahari-$service_name:dev-$GITHUB_SHA -f $service_path/Dockerfile .
+            docker push $ECR_REGISTRY/prahari-$service_name:dev-$GITHUB_SHA
+          done
+
+      - name: Update EKS Kubeconfig
+        run: |
+          aws eks update-kubeconfig --name prahari-dev-eks --region us-east-1
+
+      - name: Deploy to EKS (Helm / GitOps Sync Trigger)
+        run: |
+          echo "Updating deployment image tags in Helm values or triggering GitOps repository..."
+          # Example Helm command (or GitOps repository trigger)
+          # helm upgrade --install prahari-platform ./infrastructure/helm --namespace development --set image.tag=dev-$GITHUB_SHA

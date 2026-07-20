@@ -1,0 +1,38 @@
+service:
+  name: "nearmiss-service"
+  version: "1.0.0"
+  owner: "safety-improvement-team"
+  description: "Enterprise Near Miss Management Service owning near miss reporting, classifications potential severities, root cause investigations, CAPA action plans, verifications, and safety lessons logs"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8092
+
+health:
+  readiness: true
+  liveness: true

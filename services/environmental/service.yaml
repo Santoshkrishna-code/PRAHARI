@@ -1,0 +1,38 @@
+service:
+  name: "environmental-service"
+  version: "1.0.0"
+  owner: "environmental-compliance-and-sustainability-team"
+  description: "Enterprise Environmental Management Service for environmental aspect registers, emissions tracking, waste management, compliance inspections, and ESG dashboards"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8099
+
+health:
+  readiness: true
+  liveness: true

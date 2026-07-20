@@ -1,0 +1,11 @@
+port: 8080
+environment: "development"
+redisAddr: "localhost:6379"
+identityGrpcAddr: "localhost:9081"
+routes:
+  - path: "/api/v1/auth/*"
+    upstream: "http://localhost:8081"
+    stripPrefix: false
+  - path: "/api/v1/incidents/*"
+    upstream: "http://localhost:8082"
+    stripPrefix: true

@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "prahari-ai-cv"
+version = "1.0.0"
+description = "AI Agent & Computer Vision engines for the PRAHARI Platform"
+authors = ["PRAHARI Engineering <engineering@prahari.internal>"]
+readme = "README.md"
+packages = [
+    { include = "ai" },
+    { include = "computer-vision" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.100.0"
+uvicorn = { extras = ["standard"], version = "^0.22.0" }
+pydantic = "^2.0.0"
+boto3 = "^1.28.0"      # Required for Amazon Bedrock and AWS integrations
+botocore = "^1.31.0"
+langchain = "^0.1.0"
+langchain-community = "^0.0.10"
+langgraph = "^0.0.20"  # For stateful agent workflows
+opensearch-py = "^2.2.0" # Vector DB client for OpenSearch
+neo4j = "^5.10.0"      # Graph database driver
+ultralytics = "^8.0.120" # YOLOv8 for PPE, Fire/Smoke detection
+opencv-python-headless = "^4.8.0.74"
+numpy = "^1.24.0"
+torch = "^2.0.1"
+websockets = "^11.0.0"
+python-multipart = "^0.0.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+mypy = "^1.4.1"
+httpx = "^0.24.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

@@ -1,0 +1,38 @@
+service:
+  name: "inspection-service"
+  version: "1.0.0"
+  owner: "safety-operations-team"
+  description: "Enterprise Inspection Management Service owning safety compliance inspections, digital checklists templates, NCR findings, and corrective CAPA scheduling"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8086
+
+health:
+  readiness: true
+  liveness: true

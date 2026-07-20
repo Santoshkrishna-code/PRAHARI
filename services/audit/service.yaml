@@ -1,0 +1,38 @@
+service:
+  name: "audit-service"
+  version: "1.0.0"
+  owner: "compliance-and-assurance-audit-team"
+  description: "Enterprise Governance Risk and Compliance Audit Management Service scheduling internal and external audits NCR violations and CAPA correctives"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8096
+
+health:
+  readiness: true
+  liveness: true

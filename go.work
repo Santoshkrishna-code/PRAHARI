@@ -1,0 +1,23 @@
+go 1.21
+
+use (
+	./shared
+	./services/analytics-service
+	./services/asset-service
+	./services/audit-service
+	./services/auth-service
+	./services/compliance-service
+	./services/digital-twin-service
+	./services/emergency-service
+	./services/gateway-service
+	./services/incident-service
+	./services/location-service
+	./services/notification-service
+	./services/organization-service
+	./services/permit-service
+	./services/plant-service
+	./services/report-service
+	./services/scheduler-service
+	./services/user-service
+	./services/worker-service
+)

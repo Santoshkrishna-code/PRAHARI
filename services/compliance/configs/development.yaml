@@ -1,0 +1,54 @@
+server:
+  port: 8095
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/compliance_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 13
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "compliance-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+incident:
+  grpc_address: "localhost:8084"
+
+inspection:
+  grpc_address: "localhost:8086"
+
+permit:
+  grpc_address: "localhost:8085"
+
+maintenance:
+  grpc_address: "localhost:8088"
+
+contractor:
+  grpc_address: "localhost:8089"
+
+risk:
+  grpc_address: "localhost:8094"
+
+storage:
+  s3_bucket: "prahari-compliance-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

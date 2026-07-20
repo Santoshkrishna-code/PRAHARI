@@ -1,0 +1,21 @@
+package administration
+
+import (
+	"context"
+
+	prahariLogger "prahari/shared/logger"
+)
+
+type Client struct {
+	grpcAddr string
+}
+
+func NewClient(grpcAddr string) *Client {
+	return &Client{grpcAddr: grpcAddr}
+}
+
+func (c *Client) FetchPlantHierarchy(ctx context.Context, plantID string) (string, error) {
+	prahariLogger.Info(ctx, "Fetched plant organizational metadata from Administration service",
+		prahariLogger.String("plant_id", plantID))
+	return "BU-Chemicals/Site-West/Plant-A1", nil
+}

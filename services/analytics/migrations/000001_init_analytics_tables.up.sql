@@ -1,0 +1,128 @@
+CREATE TABLE IF NOT EXISTS metrics (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    metric_key VARCHAR(100) NOT NULL,
+    val NUMERIC(15, 4) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS kpis (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    target_val NUMERIC(15, 4) NOT NULL,
+    actual_val NUMERIC(15, 4) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'ON_TRACK',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dashboards (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    config TEXT NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    report_type VARCHAR(50) NOT NULL,
+    file_url TEXT,
+    created_by VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS report_templates (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    layout TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS scorecards (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    period VARCHAR(50) NOT NULL,
+    safety_score NUMERIC(5, 2) NOT NULL,
+    esg_score NUMERIC(5, 2) NOT NULL,
+    utilities_score NUMERIC(5, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS benchmarks (
+    id VARCHAR(50) PRIMARY KEY,
+    industry_avg NUMERIC(15, 4) NOT NULL,
+    target_plant_id VARCHAR(50) NOT NULL,
+    plant_val NUMERIC(15, 4) NOT NULL,
+    metric_key VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS trends (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    metric_key VARCHAR(100) NOT NULL,
+    direction VARCHAR(50) NOT NULL,
+    slope NUMERIC(15, 4) NOT NULL,
+    calculated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS time_series (
+    id VARCHAR(50) PRIMARY KEY,
+    metric_key VARCHAR(100) NOT NULL,
+    val NUMERIC(15, 4) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS aggregations (
+    id VARCHAR(50) PRIMARY KEY,
+    metric_key VARCHAR(100) NOT NULL,
+    val NUMERIC(15, 4) NOT NULL,
+    interval_type VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS alert_rules (
+    id VARCHAR(50) PRIMARY KEY,
+    metric_key VARCHAR(100) NOT NULL,
+    threshold NUMERIC(15, 4) NOT NULL,
+    operator VARCHAR(50) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS alert_history (
+    id VARCHAR(50) PRIMARY KEY,
+    rule_id VARCHAR(50) REFERENCES alert_rules(id),
+    metric_value NUMERIC(15, 4) NOT NULL,
+    triggered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS report_schedules (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    report_type VARCHAR(50) NOT NULL,
+    recipients TEXT NOT NULL,
+    cron_expr VARCHAR(100) NOT NULL,
+    next_run_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS exports (
+    id VARCHAR(50) PRIMARY KEY,
+    format VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    file_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);

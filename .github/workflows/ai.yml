@@ -1,0 +1,57 @@
+name: AI & CV CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'ai/**'
+      - 'computer-vision/**'
+      - 'pyproject.toml'
+      - '.github/workflows/ai.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'ai/**'
+      - 'computer-vision/**'
+      - 'pyproject.toml'
+      - '.github/workflows/ai.yml'
+
+jobs:
+  python-ci:
+    name: Python Lint, Typecheck & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Configure Poetry
+        run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install Dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Verify Formatting (Black)
+        run: poetry run black --check ai/ computer-vision/ templates/ai-agent-template/ templates/cv-template/
+
+      - name: Verify Imports (Isort)
+        run: poetry run isort --check-only ai/ computer-vision/ templates/ai-agent-template/ templates/cv-template/
+
+      - name: Static Type Validation (Mypy)
+        run: poetry run mypy ai/ computer-vision/ templates/ai-agent-template/
+
+      - name: Run Unit Tests
+        run: |
+          poetry run pytest tests/unit/ai

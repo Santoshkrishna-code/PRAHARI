@@ -1,0 +1,63 @@
+server:
+  port: 8094
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/risk_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 12
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "risk-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+hazard:
+  grpc_address: "localhost:8091"
+
+nearmiss:
+  grpc_address: "localhost:8092"
+
+incident:
+  grpc_address: "localhost:8084"
+
+observation:
+  grpc_address: "localhost:8093"
+
+maintenance:
+  grpc_address: "localhost:8088"
+
+contractor:
+  grpc_address: "localhost:8089"
+
+inspection:
+  grpc_address: "localhost:8086"
+
+permit:
+  grpc_address: "localhost:8085"
+
+asset:
+  grpc_address: "localhost:8087"
+
+storage:
+  s3_bucket: "prahari-risk-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

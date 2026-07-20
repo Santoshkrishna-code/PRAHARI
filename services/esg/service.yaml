@@ -1,0 +1,38 @@
+service:
+  name: "esg-service"
+  version: "1.0.0"
+  owner: "esg-and-corporate-sustainability-governance-team"
+  description: "Enterprise ESG & Sustainability Management Service for Scope 1/2/3 carbon inventory accounting, sustainability objectives, disclosure reporting frameworks (GRI, SASB, TCFD, CDP, CSRD), and ESG scorecard dashboards"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8100
+
+health:
+  readiness: true
+  liveness: true

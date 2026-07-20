@@ -1,0 +1,22 @@
+{
+  "name": "prahari-monorepo",
+  "version": "1.0.0",
+  "description": "PRAHARI AI-Powered Industrial Safety Intelligence Platform",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "workspaces": [
+    "frontend/*"
+  ],
+  "scripts": {
+    "setup": "npm install",
+    "dev:web": "npm run dev --workspace=frontend/web-dashboard",
+    "build:web": "npm run build --workspace=frontend/web-dashboard",
+    "lint:all": "npm run lint --workspaces",
+    "test:all": "npm test --workspaces"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.0"
+  }
+}

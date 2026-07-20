@@ -1,0 +1,38 @@
+service:
+  name: "identity-service"
+  version: "1.0.0"
+  owner: "security-team"
+  description: "Centralized IAM authentication provider for the PRAHARI ecosystem"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8081
+
+health:
+  readiness: true
+  liveness: true

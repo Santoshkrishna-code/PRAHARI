@@ -1,0 +1,123 @@
+CREATE TABLE IF NOT EXISTS conversations (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    plant_id VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id VARCHAR(50) PRIMARY KEY,
+    thread_id VARCHAR(50) REFERENCES conversations(id),
+    role VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS knowledge_documents (
+    id VARCHAR(50) PRIMARY KEY,
+    source_id VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS document_chunks (
+    id VARCHAR(50) PRIMARY KEY,
+    doc_id VARCHAR(50) REFERENCES knowledge_documents(id),
+    content TEXT NOT NULL,
+    page_number INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS embeddings (
+    id VARCHAR(50) PRIMARY KEY,
+    chunk_id VARCHAR(50) REFERENCES document_chunks(id),
+    vector_dims TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS vector_index (
+    id VARCHAR(50) PRIMARY KEY,
+    index_name VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE'
+);
+
+CREATE TABLE IF NOT EXISTS prompts (
+    id VARCHAR(50) PRIMARY KEY,
+    key VARCHAR(100) NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    content TEXT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_prompt_key_version UNIQUE (key, version)
+);
+
+CREATE TABLE IF NOT EXISTS prompt_versions (
+    id VARCHAR(50) PRIMARY KEY,
+    prompt_id VARCHAR(50) REFERENCES prompts(id),
+    version_label VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS recommendations (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    source_id VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS summaries (
+    id VARCHAR(50) PRIMARY KEY,
+    source_id VARCHAR(50) NOT NULL,
+    original TEXT NOT NULL,
+    condensed TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS predictions (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    target_topic VARCHAR(100) NOT NULL,
+    probability NUMERIC(5, 4) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS evaluations (
+    id VARCHAR(50) PRIMARY KEY,
+    response_id VARCHAR(50) NOT NULL,
+    relevance NUMERIC(5, 4) NOT NULL,
+    accuracy NUMERIC(5, 4) NOT NULL,
+    tested_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS feedback (
+    id VARCHAR(50) PRIMARY KEY,
+    response_id VARCHAR(50) NOT NULL,
+    vote INTEGER NOT NULL,
+    comment TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS guardrails (
+    id VARCHAR(50) PRIMARY KEY,
+    rule_name VARCHAR(100) NOT NULL,
+    action_type VARCHAR(50) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);
+
+CREATE TABLE IF NOT EXISTS metrics (
+    metric_key VARCHAR(100) PRIMARY KEY,
+    metric_value NUMERIC(15, 4) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

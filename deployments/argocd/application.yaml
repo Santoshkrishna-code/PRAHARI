@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prahari-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/santosh/prahari-platform.git'
+    targetRevision: HEAD
+    path: deployments/helm
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: prahari-production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

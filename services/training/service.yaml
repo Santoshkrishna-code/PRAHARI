@@ -1,0 +1,38 @@
+service:
+  name: "training-service"
+  version: "1.0.0"
+  owner: "capability-and-induction-training-team"
+  description: "Enterprise Training and Competency Management Service scheduling safety inductions courses certifications licenses renewals and matrix dashboards"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8097
+
+health:
+  readiness: true
+  liveness: true

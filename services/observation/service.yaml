@@ -1,0 +1,38 @@
+service:
+  name: "observation-service"
+  version: "1.0.0"
+  owner: "behavioral-safety-bbs-team"
+  description: "Enterprise Behavior-Based Safety (BBS) Observation Service capturing safe and unsafe workplace behaviors, coaching interventions, positive recognitions, and effectiveness metrics evaluations"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8093
+
+health:
+  readiness: true
+  liveness: true

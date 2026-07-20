@@ -1,0 +1,225 @@
+CREATE TABLE IF NOT EXISTS tenants (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    domain VARCHAR(100) UNIQUE NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS organizations (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    name VARCHAR(200) NOT NULL,
+    legal_name VARCHAR(200) NOT NULL,
+    tax_id VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'DRAFT',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS business_units (
+    id VARCHAR(50) PRIMARY KEY,
+    organization_id VARCHAR(50) REFERENCES organizations(id),
+    name VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    leader_id VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS plants (
+    id VARCHAR(50) PRIMARY KEY,
+    business_unit_id VARCHAR(50) REFERENCES business_units(id),
+    name VARCHAR(200) NOT NULL,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    location VARCHAR(200) NOT NULL,
+    time_zone VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sites (
+    id VARCHAR(50) PRIMARY KEY,
+    organization_id VARCHAR(50) REFERENCES organizations(id),
+    name VARCHAR(200) NOT NULL,
+    address TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS buildings (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) REFERENCES plants(id),
+    name VARCHAR(200) NOT NULL,
+    code VARCHAR(50) NOT NULL,
+    floors INTEGER NOT NULL DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS departments (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) REFERENCES plants(id),
+    name VARCHAR(200) NOT NULL,
+    manager_id VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS cost_centers (
+    id VARCHAR(50) PRIMARY KEY,
+    organization_id VARCHAR(50) REFERENCES organizations(id),
+    code VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    manager_id VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS locations (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) REFERENCES plants(id),
+    name VARCHAR(200) NOT NULL,
+    latitude NUMERIC(10, 7) NOT NULL,
+    longitude NUMERIC(10, 7) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS work_areas (
+    id VARCHAR(50) PRIMARY KEY,
+    department_id VARCHAR(50) REFERENCES departments(id),
+    name VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    hazard_level VARCHAR(50) NOT NULL DEFAULT 'LOW',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS production_lines (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) REFERENCES plants(id),
+    name VARCHAR(200) NOT NULL,
+    code VARCHAR(50) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS calendars (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) REFERENCES plants(id),
+    name VARCHAR(200) NOT NULL,
+    year INTEGER NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS holidays (
+    id VARCHAR(50) PRIMARY KEY,
+    calendar_id VARCHAR(50) REFERENCES calendars(id),
+    name VARCHAR(200) NOT NULL,
+    holiday_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    is_recurring BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS time_zones (
+    id VARCHAR(50) PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    offset_secs INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS localizations (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    language VARCHAR(50) NOT NULL DEFAULT 'en',
+    date_format VARCHAR(50) NOT NULL DEFAULT 'YYYY-MM-DD',
+    unit_system VARCHAR(50) NOT NULL DEFAULT 'METRIC',
+    number_decimal VARCHAR(50) NOT NULL DEFAULT 'DOT'
+);
+
+CREATE TABLE IF NOT EXISTS branding (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    logo_url TEXT,
+    primary_color VARCHAR(50) NOT NULL DEFAULT '#000000',
+    secondary_color VARCHAR(50) NOT NULL DEFAULT '#FFFFFF',
+    custom_css TEXT
+);
+
+CREATE TABLE IF NOT EXISTS feature_flags (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    name VARCHAR(100) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT false,
+    description TEXT NOT NULL DEFAULT '',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_tenant_flag_name UNIQUE (tenant_id, name)
+);
+
+CREATE TABLE IF NOT EXISTS configurations (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    config_key VARCHAR(100) NOT NULL,
+    val TEXT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_tenant_config_key UNIQUE (tenant_id, config_key)
+);
+
+CREATE TABLE IF NOT EXISTS licenses (
+    id VARCHAR(50) PRIMARY KEY,
+    tenant_id VARCHAR(50) REFERENCES tenants(id),
+    tier VARCHAR(50) NOT NULL,
+    max_plants INTEGER NOT NULL DEFAULT 1,
+    max_users INTEGER NOT NULL DEFAULT 10,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    licensed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS master_data (
+    id VARCHAR(50) PRIMARY KEY,
+    category VARCHAR(100) NOT NULL,
+    code VARCHAR(100) NOT NULL,
+    val TEXT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id VARCHAR(50) PRIMARY KEY,
+    target_type VARCHAR(50) NOT NULL,
+    target_id VARCHAR(50) NOT NULL,
+    author_id VARCHAR(50) NOT NULL,
+    body TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS attachments (
+    id VARCHAR(50) PRIMARY KEY,
+    target_type VARCHAR(50) NOT NULL,
+    target_id VARCHAR(50) NOT NULL,
+    file_name VARCHAR(200) NOT NULL,
+    file_url TEXT NOT NULL,
+    uploaded_by VARCHAR(50) NOT NULL,
+    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS timeline (
+    id VARCHAR(50) PRIMARY KEY,
+    record_id VARCHAR(50) NOT NULL,
+    event_type VARCHAR(100) NOT NULL,
+    event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    description TEXT,
+    metadata TEXT
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);
+
+CREATE TABLE IF NOT EXISTS metrics (
+    metric_key VARCHAR(100) PRIMARY KEY,
+    metric_value NUMERIC(15, 4) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

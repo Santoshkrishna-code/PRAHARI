@@ -1,0 +1,39 @@
+server:
+  port: 8085
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/permit_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 4
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "permit-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+incident:
+  grpc_address: "localhost:9084"
+
+storage:
+  s3_bucket: "prahari-permit-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

@@ -1,0 +1,45 @@
+server:
+  port: 8087
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/asset_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 6
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "asset-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+inspection:
+  grpc_address: "localhost:8086"
+
+permit:
+  grpc_address: "localhost:8085"
+
+incident:
+  grpc_address: "localhost:8084"
+
+storage:
+  s3_bucket: "prahari-asset-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

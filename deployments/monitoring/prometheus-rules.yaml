@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prahari-alert-rules
+  labels:
+    role: alert-rules
+spec:
+  groups:
+    - name: prahari-rules
+      rules:
+        - alert: ServiceApiHighLatency
+          expr: http_request_duration_seconds{quantile="0.99"} > 2.0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Service API high latency breach alert"
+
+        - alert: DatabaseConnectionFailure
+          expr: pg_stat_database_numbackends == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL Database has zero active connection connections"
+
+        - alert: QueueLagSpike
+          expr: kafka_consumergroup_lag > 5000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kafka queue lag exceeds safe bounds targets"

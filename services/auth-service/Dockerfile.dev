@@ -1,0 +1,15 @@
+# Development Dockerfile
+FROM golang:1.21-alpine
+
+# Install git for fetch dependencies
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+COPY go.mod go.sum* ./
+RUN go mod download || true
+
+COPY . .
+
+# Run dev mode using go run
+CMD ["go", "run", "cmd/server/main.go"]

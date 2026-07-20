@@ -1,0 +1,7 @@
+# ==============================================================================
+# PRAHARI TFSec Static Infrastructure Analyzer Configuration
+# ==============================================================================
+exclude:
+  # Add tfsec check exclusions here if necessary in the future
+  # - aws-s3-enable-versioning
+minimum_severity: HIGH

@@ -1,0 +1,38 @@
+service:
+  name: "gateway-service"
+  version: "1.0.0"
+  owner: "platform-team"
+  description: "Central ingress API Gateway for traffic management in PRAHARI"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "none"
+  migrations: false
+
+cache:
+  redis: true
+
+messaging:
+  kafka: false
+
+storage:
+  s3: false
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 4
+  port: 8080
+
+health:
+  readiness: true
+  liveness: true

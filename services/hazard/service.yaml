@@ -1,0 +1,38 @@
+service:
+  name: "hazard-service"
+  version: "1.0.0"
+  owner: "proactive-safety-compliance-team"
+  description: "Enterprise Hazard Management Service owning proactive workplace hazard identifications, assessments, mitigation control actions hierarchies, verifications, and 5x5 risk levels scoring"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8091
+
+health:
+  readiness: true
+  liveness: true

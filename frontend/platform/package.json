@@ -1,0 +1,38 @@
+{
+  "name": "@prahari/platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "vite apps/playground",
+    "build": "tsc -b && vite build apps/playground",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "zustand": "^5.0.1",
+    "@tanstack/react-query": "^5.62.0",
+    "lucide-react": "^0.468.0",
+    "echarts": "^5.5.1",
+    "react-hook-form": "^7.54.0",
+    "zod": "^3.23.8",
+    "@hookform/resolvers": "^3.9.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss": "^3.4.16",
+    "vitest": "^2.1.8"
+  }
+}

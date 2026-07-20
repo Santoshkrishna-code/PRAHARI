@@ -1,0 +1,5 @@
+# CODEOWNERS for PRAHARI Shared Platform Library
+
+*                       @Santoshkrishna
+/errors/                @Santoshkrishna
+/logger/                @Santoshkrishna

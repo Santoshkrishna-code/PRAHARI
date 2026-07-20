@@ -1,0 +1,6 @@
+port: 8081
+environment: "development"
+redisAddr: "localhost:6379"
+databaseURL: "postgres://postgres:postgres@localhost:5432/prahari_identity?sslmode=disable"
+jwtSecret: "prahari-developer-jwt-secret-signature-key-256"
+mfaIssuer: "PRAHARI IAM"

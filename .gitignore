@@ -1,0 +1,61 @@
+# Build artifacts
+bin/
+dist/
+build/
+out/
+.next/
+.expo/
+*.exe
+*.dll
+*.so
+*.dylib
+*.log
+
+# Dependencies
+node_modules/
+vendor/
+.pnpm-store/
+.yarn/
+
+# Local configuration files
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.yaml
+
+# IDE / Editor configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Terraform local configurations
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Android build outputs
+android/app/build/
+android/.gradle/
+*.apk
+*.aar
+*.ap_
+
+# iOS build outputs
+ios/Pods/
+ios/build/
+*.xcworkspace
+*.xcodeproj/project.xcworkspace
+*.xcodeproj/xcuserdata/
+
+# Testing coverage
+coverage/
+.nyc_output/

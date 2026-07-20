@@ -1,0 +1,38 @@
+service:
+  name: "asset-service"
+  version: "1.0.0"
+  owner: "maintenance-operations-team"
+  description: "Enterprise Asset Management Service serving as the master source of truth for industrial assets, equipment, hierarchies, locations, criticality risk calculations, and physical condition indices"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8087
+
+health:
+  readiness: true
+  liveness: true

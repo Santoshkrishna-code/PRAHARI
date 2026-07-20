@@ -1,0 +1,42 @@
+global:
+  environment: production
+  tenantID: default
+
+replicaCount: 3
+
+image:
+  repository: prahari/backend-services
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8100
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: api.prahari-ehs.internal
+      paths:
+        - path: /api
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+env:
+  DATABASE_URL: "postgres://prahari_admin:securepasswordrotation@prahari-postgres-production.us-east-1.rds.amazonaws.com:5432/prahari"
+  REDIS_ADDR: "redis-master:6379"
+  KAFKA_BROKERS: "kafka:9092"

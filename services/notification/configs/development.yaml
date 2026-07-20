@@ -1,0 +1,5 @@
+port: 8083
+environment: "development"
+redisAddr: "localhost:6379"
+databaseURL: "postgres://postgres:postgres@localhost:5432/prahari_notification?sslmode=disable"
+identityGrpcAddr: "localhost:9081"

@@ -1,0 +1,20 @@
+# ==============================================================================
+# PRAHARI Trivy Vulnerability Scanner Configuration
+# ==============================================================================
+scan:
+  vuln-type:
+    - os
+    - library
+  scanners:
+    - vuln
+    - config
+    - secret
+
+format: table
+exit-code: 1 # Fail CI build on detection of CRITICAL bugs
+severity:
+  - HIGH
+  - CRITICAL
+
+ignore:
+  unfixed: true # Skip unfixed dependencies to reduce false positives

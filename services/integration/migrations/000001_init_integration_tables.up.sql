@@ -1,0 +1,132 @@
+CREATE TABLE IF NOT EXISTS connectors (
+    id VARCHAR(50) PRIMARY KEY,
+    plant_id VARCHAR(50) NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'DISCONNECTED',
+    host VARCHAR(200) NOT NULL,
+    port INTEGER NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS connector_configs (
+    id VARCHAR(50) PRIMARY KEY,
+    connector_id VARCHAR(50) REFERENCES connectors(id),
+    config_key VARCHAR(100) NOT NULL,
+    val TEXT NOT NULL,
+    CONSTRAINT unique_connector_config_key UNIQUE (connector_id, config_key)
+);
+
+CREATE TABLE IF NOT EXISTS adapters (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    protocol VARCHAR(50) NOT NULL,
+    version VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS integration_jobs (
+    id VARCHAR(50) PRIMARY KEY,
+    job_id VARCHAR(50) NOT NULL,
+    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    finished_at TIMESTAMP WITH TIME ZONE,
+    status VARCHAR(50) NOT NULL DEFAULT 'RUNNING',
+    records_count INTEGER NOT NULL DEFAULT 0,
+    error_message TEXT
+);
+
+CREATE TABLE IF NOT EXISTS mappings (
+    id VARCHAR(50) PRIMARY KEY,
+    connector_id VARCHAR(50) REFERENCES connectors(id),
+    external_key VARCHAR(100) NOT NULL,
+    internal_key VARCHAR(100) NOT NULL,
+    data_type VARCHAR(50) NOT NULL DEFAULT 'STRING',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS transformations (
+    id VARCHAR(50) PRIMARY KEY,
+    connector_id VARCHAR(50) REFERENCES connectors(id),
+    input_format VARCHAR(50) NOT NULL,
+    output_format VARCHAR(50) NOT NULL,
+    transform_script TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS retry_queue (
+    id VARCHAR(50) PRIMARY KEY,
+    payload TEXT NOT NULL,
+    target_topic VARCHAR(200) NOT NULL,
+    retry_count INTEGER NOT NULL DEFAULT 0,
+    max_retries INTEGER NOT NULL DEFAULT 3,
+    next_run_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dead_letter_queue (
+    id VARCHAR(50) PRIMARY KEY,
+    payload TEXT NOT NULL,
+    topic_name VARCHAR(200) NOT NULL,
+    error_msg TEXT NOT NULL,
+    archived_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS webhooks (
+    id VARCHAR(50) PRIMARY KEY,
+    target_url TEXT NOT NULL,
+    event_name VARCHAR(100) NOT NULL,
+    secret_key VARCHAR(200),
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS schedulers (
+    id VARCHAR(50) PRIMARY KEY,
+    job_id VARCHAR(50) NOT NULL,
+    cron_expr VARCHAR(100) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    last_run_at TIMESTAMP WITH TIME ZONE,
+    next_run_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS import_jobs (
+    id VARCHAR(50) PRIMARY KEY,
+    file_name VARCHAR(200) NOT NULL,
+    target_area VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    progress NUMERIC(5, 2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS export_jobs (
+    id VARCHAR(50) PRIMARY KEY,
+    format VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    file_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS connection_logs (
+    id VARCHAR(50) PRIMARY KEY,
+    connector_id VARCHAR(50) REFERENCES connectors(id),
+    log_level VARCHAR(50) NOT NULL DEFAULT 'INFO',
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS audit_trail (
+    id VARCHAR(50) PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    old_state TEXT,
+    new_state TEXT
+);
+
+CREATE TABLE IF NOT EXISTS metrics (
+    metric_key VARCHAR(100) PRIMARY KEY,
+    metric_value NUMERIC(15, 4) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

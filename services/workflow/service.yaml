@@ -1,0 +1,38 @@
+service:
+  name: "workflow-service"
+  version: "1.0.0"
+  owner: "core-orchestration-team"
+  description: "Central Workflow Orchestration Engine executing business DSL state machines"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: false
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 2
+  port: 8082
+
+health:
+  readiness: true
+  liveness: true

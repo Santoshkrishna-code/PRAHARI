@@ -1,0 +1,48 @@
+server:
+  port: 8089
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/contractor_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 8
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "contractor-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+permit:
+  grpc_address: "localhost:8085"
+
+maintenance:
+  grpc_address: "localhost:8088"
+
+incident:
+  grpc_address: "localhost:8084"
+
+inspection:
+  grpc_address: "localhost:8086"
+
+storage:
+  s3_bucket: "prahari-contractor-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

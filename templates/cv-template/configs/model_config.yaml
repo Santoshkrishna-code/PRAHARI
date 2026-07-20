@@ -1,0 +1,22 @@
+# Model parameters configuration template
+
+model:
+  name: yolov8x-safety
+  type: detection  # detection, segmentation, classification
+  framework: pytorch # pytorch, tensorrt, onnx
+  input_size: [640, 640]
+  confidence_threshold: 0.50
+  iou_threshold: 0.45
+
+classes:
+  0: hard_hat
+  1: safety_vest
+  2: safety_glasses
+  3: safety_boots
+  4: person
+
+paths:
+  weights: ../weights/yolov8x-safety.pt
+  tensorrt_engine: ../weights/yolov8x-safety.engine
+  onnx: ../weights/yolov8x-safety.onnx
+  dataset_yaml: ./dataset_config.yaml

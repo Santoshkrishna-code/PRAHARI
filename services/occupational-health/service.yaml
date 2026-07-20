@@ -1,0 +1,38 @@
+service:
+  name: "occupational-health-service"
+  version: "1.0.0"
+  owner: "workforce-health-and-medicine-team"
+  description: "Enterprise Occupational Health Management Service for employee and contractor medical fitness, health surveillance, exposure monitoring, and return-to-work"
+
+runtime:
+  http: true
+  grpc: true
+
+database:
+  type: "postgres"
+  migrations: true
+
+cache:
+  redis: true
+
+messaging:
+  kafka: true
+
+storage:
+  s3: true
+
+security:
+  jwt: true
+  rbac: true
+
+observability:
+  tracing: true
+  metrics: true
+
+deployment:
+  replicas: 3
+  port: 8098
+
+health:
+  readiness: true
+  liveness: true

@@ -1,0 +1,13 @@
+# ==============================================================================
+# PRAHARI Checkov Compliance Analyzer Configuration
+# ==============================================================================
+directory:
+  - infrastructure/terraform
+framework:
+  - terraform
+quiet: true
+soft-fail: false # Hard fail if severe compliance rules are violated
+skip-check:
+  # Examples of rules to skip:
+  # - CKV_AWS_21 (S3 versioning, if disabled by config)
+  - CKV_AWS_116 # SQS DLQ checks (handled dynamically)

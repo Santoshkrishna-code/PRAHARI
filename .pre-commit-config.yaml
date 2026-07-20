@@ -1,0 +1,42 @@
+# ==============================================================================
+# PRAHARI Monorepo Pre-Commit Hook Configuration
+# ==============================================================================
+repos:
+  # Secret Leak Prevention
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+        name: Detect Hardcoded Secrets
+        entry: gitleaks detect --verbose --redact --staged
+
+  # General code formatting & sanitation checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trim-trailing-whitespace
+
+  # Python Quality Gates
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        files: ^(ai|computer-vision)/
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        files: ^(ai|computer-vision)/
+
+  # Infrastructure Quality Gates
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.81.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+      - id: terraform_tfsec

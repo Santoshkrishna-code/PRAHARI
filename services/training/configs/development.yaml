@@ -1,0 +1,54 @@
+server:
+  port: 8097
+  read_timeout: 15s
+  write_timeout: 15s
+
+database:
+  url: "postgres://prahari:prahari@localhost:5432/training_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+
+redis:
+  address: "localhost:6379"
+  db: 15
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumer_group: "training-service"
+
+identity:
+  grpc_address: "localhost:9090"
+
+workflow:
+  grpc_address: "localhost:9091"
+
+contractor:
+  grpc_address: "localhost:8089"
+
+compliance:
+  grpc_address: "localhost:8095"
+
+audit:
+  grpc_address: "localhost:8096"
+
+incident:
+  grpc_address: "localhost:8084"
+
+inspection:
+  grpc_address: "localhost:8086"
+
+risk:
+  grpc_address: "localhost:8094"
+
+storage:
+  s3_bucket: "prahari-training-evidence"
+  s3_region: "ap-south-1"
+
+logging:
+  level: "debug"
+  format: "json"
+
+telemetry:
+  sample_rate: 1.0
+  exporter: "stdout"

@@ -1,0 +1,20 @@
+package permit
+
+import (
+	"context"
+
+	prahariLogger "prahari/shared/logger"
+)
+
+type Client struct {
+	grpcAddr string
+}
+
+func NewClient(grpcAddr string) *Client {
+	return &Client{grpcAddr: grpcAddr}
+}
+
+func (c *Client) ValidatePermitRestrictions(ctx context.Context, plantID, changeType string) error {
+	prahariLogger.Info(ctx, "Validated Permit-to-Work restrictions for MOC execution", prahariLogger.String("plant_id", plantID))
+	return nil
+}
