@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
 // StartConsumer runs a blocking polling loop retrieving messages and dispatching them to the handler callback.

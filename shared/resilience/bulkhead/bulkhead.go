@@ -3,7 +3,6 @@ package bulkhead
 import (
 	"context"
 	"errors"
-	"fmt"
 )
 
 var (

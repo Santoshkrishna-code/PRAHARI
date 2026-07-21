@@ -3,7 +3,6 @@ package csrf
 import (
 	"crypto/subtle"
 	"net/http"
-	"time"
 )
 
 const (

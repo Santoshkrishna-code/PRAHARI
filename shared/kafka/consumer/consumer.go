@@ -20,19 +20,12 @@ func NewConsumer(cfg prahariKafka.Config, topic string) (*Consumer, error) {
 		return nil, err
 	}
 
-	transport := &kafka.Transport{
-		Dial:   dialer.DialFunc,
-		SASL:   dialer.SASLMechanism,
-		TLS:    dialer.TLS,
-	}
-
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   cfg.Brokers,
-		GroupID:   cfg.GroupID,
-		Topic:     topic,
-		Dialer:    dialer,
-		Transport: transport,
-		MaxBytes:  10e6, // 10MB limit
+		Brokers:  cfg.Brokers,
+		GroupID:  cfg.GroupID,
+		Topic:    topic,
+		Dialer:   dialer,
+		MaxBytes: 10e6, // 10MB limit
 	})
 
 	return &Consumer{

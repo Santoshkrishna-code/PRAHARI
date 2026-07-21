@@ -1,0 +1,103 @@
+name: PRAHARI AWS Hackathon CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install AI Platform Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic sqlalchemy asyncpg aiosqlite httpx pytest
+
+      - name: Execute Pytest Suite (Volumes 0 to 19)
+        working-directory: ai/platform
+        env:
+          APP_ENV: testing
+          DATABASE_URL: sqlite+aiosqlite:///test.db
+        run: |
+          pytest tests/
+
+  build-and-push:
+    name: Build & Push ECR Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push AI Platform Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: prahari-ai-platform
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ai/platform/Dockerfile ai/platform
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build & Push Go Gateway Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: prahari-gateway-service
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f services/gateway-service/Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy-terraform:
+    name: Terraform Infrastructure Apply
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init & Validate
+        working-directory: deployments/terraform
+        run: |
+          terraform init
+          terraform validate
+
+      - name: Terraform Apply
+        working-directory: deployments/terraform
+        run: |
+          terraform apply -auto-approve

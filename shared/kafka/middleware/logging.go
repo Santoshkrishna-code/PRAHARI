@@ -7,7 +7,7 @@ import (
 )
 
 // LoggingMiddleware wraps a message handler to log processing latency, keys, and execution status.
-func LoggingMiddleware(handler func(ctx context.Context, key, val []byte) error) func(context.Context, key, val []byte) error {
+func LoggingMiddleware(handler func(ctx context.Context, key []byte, val []byte) error) func(ctx context.Context, key []byte, val []byte) error {
 	return func(ctx context.Context, key, val []byte) error {
 		start := time.Now()
 		

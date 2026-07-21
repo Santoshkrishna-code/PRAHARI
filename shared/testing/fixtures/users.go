@@ -1,21 +1,26 @@
 package fixtures
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	prahariJWT "prahari/shared/security/jwt"
 )
 
 // NewAdminClaims returns standard Admin credentials.
 func NewAdminClaims() *prahariJWT.Claims {
 	return &prahariJWT.Claims{
-		UserID: "usr-admin-99",
-		Role:   "Admin",
+		Role: "Admin",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: "usr-admin-99",
+		},
 	}
 }
 
 // NewWorkerClaims returns standard Regular credentials.
 func NewWorkerClaims() *prahariJWT.Claims {
 	return &prahariJWT.Claims{
-		UserID: "usr-worker-11",
-		Role:   "Worker",
+		Role: "Worker",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: "usr-worker-11",
+		},
 	}
 }

@@ -13,7 +13,7 @@ type MetricsTracker struct {
 }
 
 // MetricsMiddleware increments success and failure counts depending on handler exits.
-func (t *MetricsTracker) MetricsMiddleware(handler func(ctx context.Context, key, val []byte) error) func(context.Context, key, val []byte) error {
+func (t *MetricsTracker) MetricsMiddleware(handler func(ctx context.Context, key []byte, val []byte) error) func(ctx context.Context, key []byte, val []byte) error {
 	return func(ctx context.Context, key, val []byte) error {
 		err := handler(ctx, key, val)
 		if err != nil {

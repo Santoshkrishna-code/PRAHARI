@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prahari-ai-platform-app
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=prahari-ai-platform
+      - APP_ENV=production
+      - PORT=8000
+      - DEBUG=false
+      - JWT_SECRET_KEY=production_key_must_be_set_via_env_32_bytes_long
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres_secure_pass@db:5432/prahari_ai_db
+      - REDIS_URL=redis://:redis_secure_pass@redis:6379/0
+      - ENABLE_TELEMETRY=false
+      - LOG_LEVEL=INFO
+      - JSON_LOGS=true
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:15-alpine
+    container_name: prahari-ai-platform-db
+    environment:
+      POSTGRES_DB: prahari_ai_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_secure_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d prahari_ai_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: prahari-ai-platform-redis
+    command: redis-server --requirepass redis_secure_pass
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis_secure_pass", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  redisdata:

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	redisSDK "github.com/redis/go-redis/v9"
 	prahariRedis "prahari/shared/redis"
 )
 

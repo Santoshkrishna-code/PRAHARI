@@ -2,7 +2,6 @@ package circuitbreaker
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/sony/gobreaker"
