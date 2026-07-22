@@ -8,7 +8,8 @@ import {
   Download, Plus, RefreshCw, Maximize2, Layers, Thermometer, Gauge, BarChart,
   PieChart, Calendar, MapPin, Hash, ArrowRight, ExternalLink, Wifi, Database,
   Lock, Unlock, FileSearch, GitBranch, MoreHorizontal, LogOut, UserCheck,
-  SlidersHorizontal, Rewind, SkipForward, Users, HelpCircle, List, Grid3X3
+  SlidersHorizontal, Rewind, SkipForward, Users, HelpCircle, List, Grid3X3,
+  Check, FileCheck, Award, FileWarning
 } from 'lucide-react';
 
 import { TelemetryPoint, HealthStatus, Asset, Incident } from './types';
@@ -269,56 +270,116 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-5">
-          <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
-            <span className="text-sm font-bold text-white block">Plant Risk Contribution Breakdown</span>
-            {[
-              { category: 'Asset Health & RUL Degradation', weight: 34, color: 'bg-amber-500' },
-              { category: 'Permit & LOTO Isolation Compliance', weight: 26, color: 'bg-indigo-500' },
-              { category: 'Inspection & Checklist Pass Rate', weight: 18, color: 'bg-emerald-500' },
-              { category: 'Incidents & OSHA Recordables', weight: 12, color: 'bg-purple-500' },
-              { category: 'Environmental & Gas Thresholds', weight: 10, color: 'bg-cyan-500' },
-            ].map(r => (
-              <div key={r.category} className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-zinc-300">{r.category}</span>
-                  <span className="text-zinc-400 font-semibold">{r.weight}%</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-zinc-800">
-                  <div className={`h-1.5 rounded-full ${r.color}`} style={{ width: `${r.weight}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
-            <span className="text-sm font-bold text-white block">Action Center — Immediate Items</span>
-            {[
-              { item: 'Pump P-102 Bearing Work Order WO-7821', pri: 'Medium Risk', status: 'Overdue by 14d', action: 'Approve WO' },
-              { item: 'Zone B Contractor Badge Audit', pri: 'Security', status: 'Completed', action: 'View Audit' },
-              { item: 'Hot Work Permit PTW-8902 Gas Verification', pri: 'Safety', status: '28 Active LOTO', action: 'Review PTW' },
-              { item: 'ISO 45001 Compliance Audit Export', pri: 'Compliance', status: 'Ready for PDF', action: 'Generate' },
-            ].map((a, i) => (
-              <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-xs">
-                <div>
-                  <span className="font-medium text-white block">{a.item}</span>
-                  <span className="text-[10px] text-zinc-500">{a.pri} • {a.status}</span>
-                </div>
-                <button className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[10px]">
-                  {a.action}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
 };
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 3: OPERATIONS CENTER
+// WORKSPACE 3: EXECUTIVE INSIGHTS
+// ═══════════════════════════════════════════════════════════
+export const InspectionsWorkspace: React.FC = () => (
+  <div className="h-full flex flex-col bg-[#09090b]">
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">INSPECTIONS AUDIT CHECKLISTS</span></Toolbar>
+    <div className="p-5 text-xs text-zinc-400">122 Compliance Audits Passed This Month</div>
+  </div>
+);
+
+export const ExecutiveInsights: React.FC = () => (
+  <div className="h-full flex flex-col bg-[#09090b]">
+    <Toolbar>
+      <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">EXECUTIVE COMPLIANCE INSIGHTS</span>
+      <ToolSep />
+      <span className="text-[10px] text-zinc-500">ISO 45001 & OSHA COMPLIANCE AUDIT CENTER</span>
+      <div className="flex-1" />
+      <ToolBtn className="!bg-indigo-600 !text-white"><Download size={12} /> Export Full Audit Package</ToolBtn>
+    </Toolbar>
+
+    <div className="flex-1 overflow-y-auto p-5 space-y-6">
+      <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-bold text-white">Executive Compliance Score: <span className="text-emerald-400">97.6%</span></h2>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+              Status: GOOD (↑ +1.4% this month)
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400 mt-1">
+            Last Audit: <strong className="text-zinc-200">3 Days Ago</strong> • 1,284 Evidence Files Verified • Zero Open Regulatory Enforcement Notices.
+          </p>
+        </div>
+        <div className="text-right text-xs text-zinc-500">
+          <div>Verified By: <strong className="text-indigo-400">Compliance Agent</strong></div>
+          <div>Audit Hash: <strong className="text-zinc-400 font-mono">0x4a91...b82</strong></div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-5 gap-3">
+        {[
+          { std: 'ISO 45001', score: '98%', clauses: '42/45 Compliant', color: 'text-emerald-400' },
+          { std: 'OSHA 29 CFR', score: '95%', clauses: '118/120 Req Met', color: 'text-emerald-400' },
+          { std: 'Internal EHS SOP', score: '100%', clauses: 'Completed', color: 'text-emerald-400' },
+          { std: 'Environmental', score: '96%', clauses: 'EPA Standard', color: 'text-emerald-400' },
+          { std: 'Contractor Audit', score: '91%', clauses: '1 Expired Badge', color: 'text-amber-400' },
+        ].map(s => (
+          <div key={s.std} className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">{s.std}</p>
+            <p className={`text-xl font-bold ${s.color}`}>{s.score}</p>
+            <p className="text-[10px] text-zinc-500 mt-1">{s.clauses}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20 space-y-2">
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} className="text-indigo-400" />
+          <h3 className="text-sm font-bold text-white">AI Compliance Summary & Action Plan</h3>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 pt-1 text-xs leading-relaxed text-zinc-300">
+          <div>
+            <p className="font-semibold text-zinc-200 mb-1">Today's Verified Changes:</p>
+            <ul className="space-y-1 text-zinc-400 list-disc list-inside">
+              <li>2 contractor certifications expire this week (Badge C-4412 auto-revoked).</li>
+              <li>Emergency drill due in 7 days (Warehouse Zone C).</li>
+              <li>PPE compliance index increased from 94% to 97% across Zone B.</li>
+              <li>ISO Clause 8.1 operational planning documentation verified.</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-zinc-200 mb-1">Recommended Corrective Actions:</p>
+            <ol className="space-y-1 text-zinc-400 list-decimal list-inside">
+              <li>Schedule Warehouse emergency response drill before Friday.</li>
+              <li>Renew contractor medical certification for C-4412.</li>
+              <li>Upload missing permit attachment for PTW-8903.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
+        <span className="text-sm font-bold text-white block">Plant Area Compliance Score Heatmap</span>
+        <div className="grid grid-cols-5 gap-3">
+          {[
+            { zone: 'Zone A (Main Line)', score: '98%', status: 'Compliant', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+            { zone: 'Zone B (Reactor North)', score: '92%', status: 'Attention', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+            { zone: 'Tank Farm T-204', score: '100%', status: 'Optimal', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+            { zone: 'Utilities & Steam', score: '95%', status: 'Compliant', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+            { zone: 'Warehouse Storage', score: '89%', status: 'Drill Due', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+          ].map(z => (
+            <div key={z.zone} className={`p-3 rounded-xl border ${z.color} text-xs space-y-1`}>
+              <span className="font-bold text-white block">{z.zone}</span>
+              <span className="text-lg font-extrabold">{z.score}</span>
+              <span className="block text-[10px] opacity-80">{z.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════
+// WORKSPACE 4: OPERATIONS CENTER
 // ═══════════════════════════════════════════════════════════
 export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
   const l = tele[tele.length - 1] || { vib: 11.8, temp: 94.1, psi: 242, kw: 330, flow: 84 };
@@ -367,7 +428,6 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
           </div>
         </div>
 
-        {/* Right Inspector Sidebar: Equipment Fleet */}
         <div className="w-72 border-l border-white/[0.04] bg-white/[0.01] flex flex-col shrink-0">
           <div className="h-9 px-4 border-b border-white/[0.04] flex items-center justify-between">
             <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Equipment Status</span>
@@ -401,7 +461,7 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
 };
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 4: INDUSTRIAL TWIN
+// WORKSPACE 5: INDUSTRIAL TWIN
 // ═══════════════════════════════════════════════════════════
 export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
   const l = tele[tele.length - 1] || { temp: 94.1, vib: 11.8 };
@@ -477,7 +537,7 @@ export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) =
 };
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 5: AI COMMAND CENTER
+// WORKSPACE 6: AI COMMAND CENTER
 // ═══════════════════════════════════════════════════════════
 export const AICommandCenter: React.FC = () => {
   const steps = [
@@ -537,7 +597,7 @@ export const AICommandCenter: React.FC = () => {
 };
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 6: INCIDENTS WORKSPACE
+// WORKSPACE 7: INCIDENTS WORKSPACE
 // ═══════════════════════════════════════════════════════════
 export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = ({ onReportIncident }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -594,7 +654,7 @@ export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 7: SAFE WORK PERMITS
+// WORKSPACE 8: SAFE WORK PERMITS
 // ═══════════════════════════════════════════════════════════
 export const PermitsWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -629,7 +689,7 @@ export const PermitsWorkspace: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 8: MAINTENANCE WORKFLOW
+// WORKSPACE 9: MAINTENANCE WORKFLOW
 // ═══════════════════════════════════════════════════════════
 export const MaintenanceWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -658,7 +718,7 @@ export const MaintenanceWorkspace: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 9: RISK ASSESSMENT
+// WORKSPACE 10: RISK ASSESSMENT
 // ═══════════════════════════════════════════════════════════
 export const RiskWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -689,7 +749,7 @@ export const RiskWorkspace: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 10: VISION INTELLIGENCE
+// WORKSPACE 11: VISION INTELLIGENCE
 // ═══════════════════════════════════════════════════════════
 export const VisionIntelligence: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -714,7 +774,7 @@ export const VisionIntelligence: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 11: AGENT ORCHESTRATION
+// WORKSPACE 12: AGENT ORCHESTRATION
 // ═══════════════════════════════════════════════════════════
 export const AgentOrchestration: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -737,7 +797,7 @@ export const AgentOrchestration: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 12: ASSETS WORKSPACE
+// WORKSPACE 13: ASSETS WORKSPACE
 // ═══════════════════════════════════════════════════════════
 export const AssetsWorkspace: React.FC<{ tele: TelemetryPoint[]; onAddAsset?: () => void }> = ({ onAddAsset }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
@@ -763,45 +823,53 @@ export const AssetsWorkspace: React.FC<{ tele: TelemetryPoint[]; onAddAsset?: ()
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 13: PLATFORM OPERATIONS
+// WORKSPACE 14: PLATFORM OPERATIONS
 // ═══════════════════════════════════════════════════════════
 export const PlatformOps: React.FC<{ health: HealthStatus }> = ({ health }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
     <Toolbar><span className="text-[11px] font-semibold text-zinc-300">PLATFORM OPERATIONS (AWS OBSERVABILITY)</span></Toolbar>
-    <div className="p-5 grid grid-cols-4 gap-4">
-      {[
-        { svc: 'Application Load Balancer', name: 'prahari-alb-hackathon', lat: `${health.lat}ms`, st: health.status },
-        { svc: 'ECS Fargate Cluster', name: 'prahari-hackathon-cluster', lat: '1 Task Active', st: 'Running' },
-        { svc: 'RDS PostgreSQL', name: 'prahari-postgres-hackathon', lat: 'v15.7 Engine', st: 'Healthy' },
-        { svc: 'ElastiCache Redis', name: 'prahari-redis-hackathon', lat: 'Pub/Sub Stream', st: 'Healthy' },
-      ].map(s => (
-        <div key={s.svc} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-          <h3 className="text-xs font-bold text-white">{s.svc}</h3>
-          <p className="text-[10px] text-zinc-500 mt-0.5">{s.name}</p>
-          <div className="flex justify-between items-center mt-3 text-xs">
-            <span className="text-zinc-400">{s.lat}</span>
-            <span className="text-emerald-400 font-bold">{s.st}</span>
+    <div className="flex-1 overflow-y-auto p-5 space-y-5">
+      <div className="grid grid-cols-4 gap-4">
+        {[
+          { svc: 'API Gateway', name: 'prahari-alb-gateway', lat: `${health.lat}ms`, st: health.status },
+          { svc: 'WebSocket Hub', name: 'ws://prahari-events', lat: '27 Clients Connected', st: 'Active Stream' },
+          { svc: 'PostgreSQL RDS', name: 'prahari-db-postgres', lat: 'v15.7 Engine', st: 'Healthy' },
+          { svc: 'Redis Pub/Sub', name: 'prahari-redis-cache', lat: '40 events/sec', st: 'Healthy' },
+          { svc: 'MQTT Broker', name: 'mqtt://prahari-broker', lat: '2,145 msg/min', st: 'Connected' },
+          { svc: 'ECS Fargate Cluster', name: 'prahari-ecs-cluster', lat: '38% CPU • 56% RAM', st: '1 Task Running' },
+          { svc: 'S3 Website Bucket', name: 'prahari-frontend-bucket', lat: 'HTTP 200 OK', st: 'Deployed' },
+          { svc: 'CloudWatch Metrics', name: 'prahari-log-group', lat: '1,284 Signals Trace', st: 'Active Logging' },
+        ].map(s => (
+          <div key={s.svc} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <h3 className="text-xs font-bold text-white">{s.svc}</h3>
+            <p className="text-[10px] text-zinc-500 mt-0.5">{s.name}</p>
+            <div className="flex justify-between items-center mt-3 text-xs">
+              <span className="text-zinc-400">{s.lat}</span>
+              <span className="text-emerald-400 font-bold">{s.st}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   </div>
 );
 
 // ═══════════════════════════════════════════════════════════
-// OTHER WORKSPACES
+// WORKSPACE 15: SETTINGS
 // ═══════════════════════════════════════════════════════════
-export const InspectionsWorkspace: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">INSPECTIONS AUDIT CHECKLISTS</span></Toolbar><div className="p-5 text-xs text-zinc-400">122 Compliance Audits Passed This Month</div></div>
-);
-
-export const ExecutiveInsights: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">EXECUTIVE COMPLIANCE INSIGHTS</span></Toolbar><div className="p-5 text-xs text-zinc-400">ISO 45001 & OSHA Documentation Verified</div></div>
-);
-
 export const SettingsWorkspace: React.FC<{ session?: UserSession }> = ({ session }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
     <Toolbar><span className="text-[11px] font-semibold text-zinc-300">SETTINGS & TENANT CONFIGURATION</span></Toolbar>
-    <div className="p-5 text-xs text-zinc-400">Organization: {session?.orgName || 'Alpha Chemical Refinery Inc.'} ({session?.role})</div>
+    <div className="flex-1 overflow-y-auto p-5 space-y-5">
+      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] space-y-3">
+        <h3 className="text-sm font-bold text-white">Tenant Organization Details</h3>
+        <div className="grid grid-cols-2 gap-4 text-xs">
+          <div><label className="text-[10px] text-zinc-500 uppercase">Organization Name</label><input disabled value={session?.orgName || 'Alpha Chemical Refinery Inc.'} className="w-full mt-1 px-3 py-2 rounded bg-white/[0.03] border border-white/[0.08] text-white" /></div>
+          <div><label className="text-[10px] text-zinc-500 uppercase">User Role Scope</label><input disabled value={session?.role || 'Plant Manager'} className="w-full mt-1 px-3 py-2 rounded bg-white/[0.03] border border-white/[0.08] text-white" /></div>
+          <div><label className="text-[10px] text-zinc-500 uppercase">AWS ALB API Endpoint</label><input disabled value="http://prahari-alb-hackathon-125438813.us-east-1.elb.amazonaws.com" className="w-full mt-1 px-3 py-2 rounded bg-white/[0.03] border border-white/[0.08] text-white font-mono" /></div>
+          <div><label className="text-[10px] text-zinc-500 uppercase">Multi-LLM Fallback Model</label><input disabled value="OpenAI GPT-4o / Claude 3.5 / Bedrock" className="w-full mt-1 px-3 py-2 rounded bg-white/[0.03] border border-white/[0.08] text-white" /></div>
+        </div>
+      </div>
+    </div>
   </div>
 );
