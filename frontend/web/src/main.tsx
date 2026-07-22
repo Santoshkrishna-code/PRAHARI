@@ -53,7 +53,7 @@ const API = (window as any).__PRAHARI_API__ || '';
 // ═══════════════════════════════════════════════════════════
 const App: React.FC = () => {
   // App View State: 'landing' | 'login' | 'onboarding' | 'workspace'
-  const [appView, setAppView] = useState<'landing' | 'login' | 'onboarding' | 'workspace'>('workspace');
+  const [appView, setAppView] = useState<'landing' | 'login' | 'onboarding' | 'workspace'>('landing');
   const [page, setPage] = useState<PageId>('command-center');
   const [navOpen, setNavOpen] = useState(true);
   const [cmdOpen, setCmdOpen] = useState(false);
