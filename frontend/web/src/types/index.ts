@@ -59,12 +59,21 @@ export interface Incident {
   time?: string;
 }
 
-export interface AgentStatus {
-  n: string;
-  r: string;
-  detail: string;
-  lat: number;
-  conf: number;
-  mem: string;
-  s: string;
+export interface WorkOrder {
+  id: string;
+  desc: string;
+  asset: string;
+  pri: string;
+  rul: string;
+  st: string;
 }
+
+export interface Permit {
+  id: string;
+  asset: string;
+  type: string;
+  owner: string;
+  st: string;
+  expires: string;
+}
+

@@ -791,41 +791,35 @@ export const AICommandCenter: React.FC<{ onGenerateWorkOrder?: (asset: string, d
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 7: INCIDENTS WORKSPACE
 // ═══════════════════════════════════════════════════════════
-export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = ({ onReportIncident }) => (
-  <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar>
-      <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INCIDENTS & HAZARD INVESTIGATION</span>
-      <div className="flex-1" />
-      <ToolBtn onClick={onReportIncident} className="!bg-red-600/80 !text-white">
-        <Plus size={12} /> Report Incident
-      </ToolBtn>
-    </Toolbar>
-    <div className="flex-1 flex overflow-hidden">
-      <div className="flex-1 p-5 space-y-4 overflow-y-auto">
-        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-mono text-zinc-500">INC-2026-0447</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Under Investigation</span>
-          </div>
-          <h2 className="text-base font-bold text-white">Pump P-102 Vibration Anomaly & PPE Non-Compliance</h2>
-          <p className="text-xs text-zinc-400 mt-1">Assigned: EHS Safety Team • SLA Remaining: <span className="text-amber-400 font-semibold">01:42:10</span></p>
+export const IncidentsWorkspace: React.FC<{ incidents?: Incident[]; onReportIncident?: () => void }> = ({ incidents = [], onReportIncident }) => {
+  const defaultIncidents: Incident[] = [
+    { id: 'INC-2026-0447', title: 'Pump P-102 Vibration Anomaly', desc: 'Vibration probe threshold exceeded during high-pressure run.', sev: 'Warning', asset: 'Pump P-102', st: 'Under Investigation', time: '14:10' },
+    { id: 'INC-2026-0442', title: 'Contractor Badge Expiration Zone B', desc: 'Contractor C-4412 detected with expired safety badge.', sev: 'Info', asset: 'Gate B', st: 'Resolved', time: '12:30' },
+  ];
+  const displayIncidents = incidents.length > 0 ? incidents : defaultIncidents;
 
-          <div className="mt-4 pt-3 border-t border-white/[0.04] space-y-2">
-            <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">5-Whys Root Cause Analysis:</h3>
-            {[
-              { q: 'Why did Pump P-102 trip?', a: 'Vibration velocity reached 11.8 mm/s.' },
-              { q: 'Why was vibration elevated?', a: 'Bearing outer race wear misalignment.' },
-              { q: 'Why was bearing worn?', a: 'Lubrication breakdown under thermal load.' },
-              { q: 'Why did lubrication fail?', a: 'PM interval was exceeded by 14 days due to un-escalated WO-7821.' },
-            ].map((w, i) => (
-              <div key={i} className="text-xs p-2 rounded bg-white/[0.015]">
-                <span className="font-semibold text-zinc-300">{i + 1}. {w.q}</span>
-                <span className="text-zinc-400 ml-2">{w.a}</span>
+  return (
+    <div className="h-full flex flex-col bg-[#09090b]">
+      <Toolbar>
+        <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INCIDENTS & HAZARD INVESTIGATION</span>
+        <div className="flex-1" />
+        <ToolBtn onClick={onReportIncident} className="!bg-red-600/80 !text-white">
+          <Plus size={12} /> Report Incident
+        </ToolBtn>
+      </Toolbar>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 p-5 space-y-4 overflow-y-auto">
+          {displayIncidents.map(inc => (
+            <div key={inc.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-mono text-indigo-400 font-bold">{inc.id}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">{inc.st}</span>
               </div>
-            ))}
-          </div>
+              <h2 className="text-base font-bold text-white">{inc.title || inc.desc}</h2>
+              <p className="text-xs text-zinc-400 mt-1">Asset: <span className="text-zinc-200 font-semibold">{inc.asset}</span> • Severity: <span className="text-amber-400 font-bold">{inc.sev}</span> • Logged: {inc.time || 'Today'}</p>
+            </div>
+          ))}
         </div>
-      </div>
 
       <div className="w-80 border-l border-white/[0.04] p-4 bg-white/[0.01] space-y-3">
         <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block">Corrective Actions (CAPA)</span>
@@ -841,9 +835,10 @@ export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = (
           </div>
         ))}
       </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 8: SAFE WORK PERMITS
@@ -883,31 +878,36 @@ export const PermitsWorkspace: React.FC = () => (
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 9: MAINTENANCE WORKFLOW
 // ═══════════════════════════════════════════════════════════
-export const MaintenanceWorkspace: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">PREDICTIVE MAINTENANCE WORKFLOW</span></Toolbar>
-    <div className="flex-1 p-5 space-y-3 overflow-y-auto">
-      <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
-        <span className="w-24">WO ID</span><span className="flex-1">Description</span><span className="w-24">Asset</span><span className="w-16">Priority</span><span className="w-16">RUL</span><span className="w-20">Status</span>
-      </div>
-      {[
-        { id: 'WO-7821', desc: 'Bearing replacement and lubrication service', asset: 'P-102', pri: 'Critical', rul: '18d', st: 'Overdue' },
-        { id: 'WO-7822', desc: 'Vibration probe recalibration', asset: 'P-102', pri: 'High', rul: '18d', st: 'Assigned' },
-        { id: 'WO-7823', desc: 'Quarterly compressor inspection', asset: 'C-03', pri: 'Medium', rul: '84d', st: 'Scheduled' },
-        { id: 'WO-7824', desc: 'Boiler tube thickness measurement', asset: 'Boiler A', pri: 'Medium', rul: '71d', st: 'Scheduled' },
-      ].map(w => (
-        <div key={w.id} className="h-11 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
-          <span className="w-24 text-indigo-400 font-semibold font-mono text-[11px]">{w.id}</span>
-          <span className="flex-1 text-zinc-200 font-medium">{w.desc}</span>
-          <span className="w-24 text-zinc-400">{w.asset}</span>
-          <span className="w-16"><span className={`text-[10px] font-bold ${w.pri === 'Critical' ? 'text-red-400' : 'text-amber-400'}`}>{w.pri}</span></span>
-          <span className="w-16 text-amber-400 font-semibold">{w.rul}</span>
-          <span className="w-20"><span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${w.st === 'Overdue' ? 'bg-red-500/15 text-red-400' : 'bg-indigo-500/15 text-indigo-400'}`}>{w.st}</span></span>
+export const MaintenanceWorkspace: React.FC<{ workOrders?: WorkOrder[] }> = ({ workOrders = [] }) => {
+  const defaultWos: WorkOrder[] = [
+    { id: 'WO-7821', desc: 'Bearing replacement and lubrication service', asset: 'P-102', pri: 'Critical', rul: '18d', st: 'Overdue' },
+    { id: 'WO-7822', desc: 'Vibration probe recalibration', asset: 'P-102', pri: 'High', rul: '18d', st: 'Assigned' },
+    { id: 'WO-7823', desc: 'Quarterly compressor inspection', asset: 'C-03', pri: 'Medium', rul: '84d', st: 'Scheduled' },
+    { id: 'WO-7824', desc: 'Boiler tube thickness measurement', asset: 'Boiler A', pri: 'Medium', rul: '71d', st: 'Scheduled' },
+  ];
+  const displayWos = workOrders.length > 0 ? workOrders : defaultWos;
+
+  return (
+    <div className="h-full flex flex-col bg-[#09090b]">
+      <Toolbar><span className="text-[11px] font-semibold text-zinc-300">PREDICTIVE MAINTENANCE WORKFLOW</span></Toolbar>
+      <div className="flex-1 p-5 space-y-3 overflow-y-auto">
+        <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
+          <span className="w-24">WO ID</span><span className="flex-1">Description</span><span className="w-24">Asset</span><span className="w-16">Priority</span><span className="w-16">RUL</span><span className="w-20">Status</span>
         </div>
-      ))}
+        {displayWos.map((w, idx) => (
+          <div key={w.id + idx} className="h-11 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
+            <span className="w-24 text-indigo-400 font-semibold font-mono text-[11px]">{w.id}</span>
+            <span className="flex-1 text-zinc-200 font-medium">{w.desc}</span>
+            <span className="w-24 text-zinc-400">{w.asset}</span>
+            <span className="w-16"><span className={`text-[10px] font-bold ${w.pri === 'Critical' ? 'text-red-400' : 'text-amber-400'}`}>{w.pri}</span></span>
+            <span className="w-16 text-amber-400 font-semibold">{w.rul}</span>
+            <span className="w-20"><span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${w.st === 'Overdue' ? 'bg-red-500/15 text-red-400' : 'bg-indigo-500/15 text-indigo-400'}`}>{w.st}</span></span>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 10: RISK ASSESSMENT
@@ -991,28 +991,41 @@ export const AgentOrchestration: React.FC = () => (
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 13: ASSETS WORKSPACE
 // ═══════════════════════════════════════════════════════════
-export const AssetsWorkspace: React.FC<{ tele: TelemetryPoint[]; onAddAsset?: () => void }> = ({ onAddAsset }) => (
-  <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar>
-      <span className="text-[11px] font-semibold text-zinc-300">ASSET REGISTRY (IBM MAXIMO FLEET)</span>
-      <div className="flex-1" />
-      <ToolBtn onClick={onAddAsset} className="!bg-indigo-600 !text-white"><Plus size={12} /> Add Asset</ToolBtn>
-    </Toolbar>
-    <div className="p-5 space-y-3 overflow-y-auto">
-      {[
-        { name: 'Pump P-102', loc: 'DC-101 Recirc', health: 74, rul: '18d', st: 'Warning' },
-        { name: 'Valve V-88', loc: 'DC-101 Isol', health: 98, rul: 'N/A', st: 'Locked' },
-        { name: 'Heat Exchanger HX-04', loc: 'DC-101 Cool', health: 91, rul: '62d', st: 'Running' },
-        { name: 'Compressor C-03', loc: 'DC-102', health: 96, rul: '84d', st: 'Running' },
-      ].map(as => (
-        <div key={as.name} className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04] text-xs">
-          <div><span className="font-bold text-white">{as.name}</span><span className="text-zinc-500 ml-3">{as.loc}</span></div>
-          <div className="flex gap-6"><span className={as.health < 80 ? 'text-amber-400 font-bold' : 'text-emerald-400'}>Health: {as.health}%</span><span className="text-zinc-400">RUL: {as.rul}</span><span className="text-indigo-400 font-semibold">{as.st}</span></div>
-        </div>
-      ))}
+export const AssetsWorkspace: React.FC<{ assets?: Asset[]; tele?: TelemetryPoint[]; onAddAsset?: () => void; onNavigateToAsset?: (assetId: string) => void }> = ({ assets = [], onAddAsset, onNavigateToAsset }) => {
+  const defaultAssets = [
+    { name: 'Pump P-102', loc: 'DC-101 Recirc', type: 'Centrifugal Pump', health: 74, rul: '18d', st: 'Warning', owner: 'Mechanical Team', vib: 11.8, temp: 94.1 },
+    { name: 'Valve V-88', loc: 'DC-101 Isol', type: 'Gate Valve', health: 98, rul: 'N/A', st: 'Locked', owner: 'Safety Team', vib: '--', temp: '--' },
+    { name: 'Heat Exchanger HX-04', loc: 'DC-101 Cool', type: 'Shell & Tube', health: 91, rul: '62d', st: 'Running', owner: 'Process Team', vib: 3.2, temp: 88 },
+    { name: 'Compressor C-03', loc: 'DC-102', type: 'Reciprocating', health: 96, rul: '84d', st: 'Running', owner: 'Mechanical Team', vib: 4.1, temp: 72 },
+  ];
+  const displayAssets = assets.length > 0 ? assets : defaultAssets;
+
+  return (
+    <div className="h-full flex flex-col bg-[#09090b]">
+      <Toolbar>
+        <span className="text-[11px] font-semibold text-zinc-300">ASSET REGISTRY (IBM MAXIMO FLEET)</span>
+        <div className="flex-1" />
+        <ToolBtn onClick={onAddAsset} className="!bg-indigo-600 !text-white"><Plus size={12} /> Add Asset</ToolBtn>
+      </Toolbar>
+      <div className="p-5 space-y-3 overflow-y-auto">
+        {displayAssets.map((as, idx) => (
+          <div key={as.name + idx} onClick={() => onNavigateToAsset?.(as.name.toLowerCase())} className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] text-xs cursor-pointer transition-colors">
+            <div>
+              <span className="font-bold text-white">{as.name}</span>
+              <span className="text-zinc-500 ml-3">{as.loc}</span>
+              {as.type && <span className="text-[10px] text-zinc-500 ml-2">({as.type})</span>}
+            </div>
+            <div className="flex gap-6">
+              <span className={as.health < 80 ? 'text-amber-400 font-bold' : 'text-emerald-400'}>Health: {as.health}%</span>
+              <span className="text-zinc-400">RUL: {as.rul}</span>
+              <span className="text-indigo-400 font-semibold">{as.st}</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 14: PLATFORM OPERATIONS

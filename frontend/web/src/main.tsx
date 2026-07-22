@@ -71,6 +71,26 @@ const App: React.FC = () => {
   const [assetModalOpen, setAssetModalOpen] = useState(false);
   const [incidentModalOpen, setIncidentModalOpen] = useState(false);
 
+  // Live state for Assets, Incidents, and Work Orders
+  const [assetsList, setAssetsList] = useState<Asset[]>([
+    { name: 'Pump P-102', loc: 'DC-101 Recirc', type: 'Centrifugal Pump', health: 74, rul: '18d', st: 'Warning', owner: 'Mechanical Team', vib: 11.8, temp: 94.1 },
+    { name: 'Valve V-88', loc: 'DC-101 Isol', type: 'Gate Valve', health: 98, rul: 'N/A', st: 'Locked', owner: 'Safety Team', vib: '--', temp: '--' },
+    { name: 'Heat Exchanger HX-04', loc: 'DC-101 Cool', type: 'Shell & Tube', health: 91, rul: '62d', st: 'Running', owner: 'Process Team', vib: 3.2, temp: 88 },
+    { name: 'Compressor C-03', loc: 'DC-102', type: 'Reciprocating', health: 96, rul: '84d', st: 'Running', owner: 'Mechanical Team', vib: 4.1, temp: 72 },
+  ]);
+
+  const [incidentsList, setIncidentsList] = useState<Incident[]>([
+    { id: 'INC-2026-0447', title: 'Pump P-102 Vibration Anomaly', desc: 'Vibration probe threshold exceeded during high-pressure run.', sev: 'Warning', asset: 'Pump P-102', st: 'Under Investigation', time: '14:10' },
+    { id: 'INC-2026-0442', title: 'Contractor Badge Expiration Zone B', desc: 'Contractor C-4412 detected with expired safety badge.', sev: 'Info', asset: 'Gate B', st: 'Resolved', time: '12:30' },
+  ]);
+
+  const [workOrdersList, setWorkOrdersList] = useState<WorkOrder[]>([
+    { id: 'WO-7821', desc: 'Bearing replacement and lubrication service', asset: 'P-102', pri: 'Critical', rul: '18d', st: 'Overdue' },
+    { id: 'WO-7822', desc: 'Vibration probe recalibration', asset: 'P-102', pri: 'High', rul: '18d', st: 'Assigned' },
+    { id: 'WO-7823', desc: 'Quarterly compressor inspection', asset: 'C-03', pri: 'Medium', rul: '84d', st: 'Scheduled' },
+    { id: 'WO-7824', desc: 'Boiler tube thickness measurement', asset: 'Boiler A', pri: 'Medium', rul: '71d', st: 'Scheduled' },
+  ]);
+
   // Event stream state
   const [unreadCount, setUnreadCount] = useState(2);
   const [latestEvent, setLatestEvent] = useState<EnterpriseEvent | null>(null);
@@ -193,6 +213,16 @@ const App: React.FC = () => {
   };
 
   const handleGenerateWorkOrder = (asset: string, desc: string) => {
+    const newWo: WorkOrder = {
+      id: `WO-${Math.floor(7825 + Math.random() * 100)}`,
+      desc: desc,
+      asset: asset,
+      pri: 'High',
+      rul: '18d',
+      st: 'Dispatched',
+    };
+    setWorkOrdersList(prev => [newWo, ...prev]);
+
     eventBus.emit({
       eventId: `evt-wo-${Date.now()}`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
@@ -218,14 +248,14 @@ const App: React.FC = () => {
       case 'operations': return <OperationsCenter tele={tele} onNavigateToAsset={handleNavigateToAsset} />;
       case 'industrial-twin': return <IndustrialTwin tele={tele} initialSelectedAssetId={selectedAssetId} />;
       case 'ai-command': return <AICommandCenter onGenerateWorkOrder={handleGenerateWorkOrder} />;
-      case 'incidents': return <IncidentsWorkspace onReportIncident={() => setIncidentModalOpen(true)} />;
+      case 'incidents': return <IncidentsWorkspace incidents={incidentsList} onReportIncident={() => setIncidentModalOpen(true)} />;
       case 'vision-intel': return <VisionIntelligence />;
       case 'agent-orch': return <AgentOrchestration />;
-      case 'assets': return <AssetsWorkspace tele={tele} onAddAsset={() => setAssetModalOpen(true)} onNavigateToAsset={handleNavigateToAsset} />;
+      case 'assets': return <AssetsWorkspace assets={assetsList} tele={tele} onAddAsset={() => setAssetModalOpen(true)} onNavigateToAsset={handleNavigateToAsset} />;
       case 'platform-ops': return <PlatformOps health={health} />;
       case 'ops-intelligence': return <OpsIntelligence tele={tele} onNavigateToPage={handleNavigateToPage} onGenerateWorkOrder={handleGenerateWorkOrder} />;
       case 'permits': return <PermitsWorkspace />;
-      case 'maintenance': return <MaintenanceWorkspace />;
+      case 'maintenance': return <MaintenanceWorkspace workOrders={workOrdersList} />;
       case 'risk': return <RiskWorkspace onNavigateToAsset={handleNavigateToAsset} />;
       case 'inspections': return <InspectionsWorkspace />;
       case 'executive': return <ExecutiveInsights />;
@@ -463,6 +493,7 @@ const App: React.FC = () => {
         isOpen={assetModalOpen}
         onClose={() => setAssetModalOpen(false)}
         onCreate={(asset) => {
+          setAssetsList(prev => [asset, ...prev]);
           eventBus.emit({
             category: 'Asset',
             source: 'Assets Workspace',
@@ -479,6 +510,7 @@ const App: React.FC = () => {
         isOpen={incidentModalOpen}
         onClose={() => setIncidentModalOpen(false)}
         onReport={(incident) => {
+          setIncidentsList(prev => [incident, ...prev]);
           eventBus.emit({
             category: 'Incident',
             source: 'Incidents Workspace',
