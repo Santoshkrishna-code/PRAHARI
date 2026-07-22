@@ -8,7 +8,7 @@ import {
   MessageSquare, Play, Circle, TrendingUp, ChevronLeft, Command, Filter,
   Download, Plus, RefreshCw, Maximize2, Layers, Thermometer, Gauge, BarChart,
   PieChart, Calendar, MapPin, Hash, ArrowRight, ExternalLink, Wifi, Database,
-  Lock, Unlock, FileSearch, GitBranch, MoreHorizontal, LogOut, UserCheck
+  Lock, Unlock, FileSearch, GitBranch, MoreHorizontal, LogOut, UserCheck, X
 } from 'lucide-react';
 
 import { PageId } from './types';
@@ -49,10 +49,9 @@ import {
 const API = (window as any).__PRAHARI_API__ || '';
 
 // ═══════════════════════════════════════════════════════════
-// MAIN CONNECTED ENTERPRISE AI SAFETY OPERATING SYSTEM
+// MAIN CONNECTED REAL-TIME ENTERPRISE AI SAFETY OPERATING SYSTEM
 // ═══════════════════════════════════════════════════════════
 const App: React.FC = () => {
-  // App View State: 'landing' | 'login' | 'onboarding' | 'workspace'
   const [appView, setAppView] = useState<'landing' | 'login' | 'onboarding' | 'workspace'>('landing');
   const [page, setPage] = useState<PageId>('command-center');
   const [navOpen, setNavOpen] = useState(true);
@@ -60,6 +59,9 @@ const App: React.FC = () => {
   const [tourActive, setTourActive] = useState(false);
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [inspectedEntityId, setInspectedEntityId] = useState<string | null>(null);
+
+  // Proactive AI Alert Toast
+  const [proactiveToast, setProactiveToast] = useState<{ title: string; desc: string } | null>(null);
 
   // Modals state
   const [assetModalOpen, setAssetModalOpen] = useState(false);
@@ -84,11 +86,18 @@ const App: React.FC = () => {
   const health = useHealth();
   const tele = useTelemetry();
 
-  // Event Bus subscription
+  // Unified Event Bus subscription for real-time proactive push
   useEffect(() => {
     const unsubscribe = eventBus.subscribe((evt) => {
       setLatestEvent(evt);
       setUnreadCount(c => c + 1);
+
+      if (evt.aiDecision && evt.severity === 'Critical') {
+        setProactiveToast({
+          title: `⚠️ Proactive AI Recommendation (${evt.asset || 'Plant Anomaly'})`,
+          desc: evt.aiDecision,
+        });
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -188,7 +197,31 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#09090b] text-zinc-200 overflow-hidden font-sans">
+    <div className="h-screen flex flex-col bg-[#09090b] text-zinc-200 overflow-hidden font-sans relative">
+      {/* Proactive AI Alert Toast Banner */}
+      {proactiveToast && (
+        <div className="absolute top-14 right-6 z-50 max-w-md bg-amber-950/90 border border-amber-500/40 rounded-2xl p-4 shadow-2xl backdrop-blur-md animate-bounce">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-amber-400" />
+              <h4 className="font-bold text-amber-300 text-xs">{proactiveToast.title}</h4>
+            </div>
+            <button onClick={() => setProactiveToast(null)} className="text-zinc-500 hover:text-white">
+              <X size={14} />
+            </button>
+          </div>
+          <p className="text-[12px] text-zinc-200 mt-1.5 leading-relaxed">{proactiveToast.desc}</p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => { setPage('ai-command'); setProactiveToast(null); }}
+              className="px-3 py-1 rounded-lg bg-amber-500 text-black font-semibold text-[10px]"
+            >
+              Open AI Command Center
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Guided Tour Banner */}
       {tourActive && (
         <GuidedTour
