@@ -177,25 +177,56 @@ const App: React.FC = () => {
     );
   }
 
+  const [selectedAssetId, setSelectedAssetId] = useState<string>('pump');
+
+  const handleNavigateToAsset = (assetId: string) => {
+    setSelectedAssetId(assetId);
+    setPage('industrial-twin');
+  };
+
+  const handleNavigateToPage = (targetPage: PageId) => {
+    setPage(targetPage);
+  };
+
+  const handleGenerateWorkOrder = (asset: string, desc: string) => {
+    eventBus.emit({
+      eventId: `evt-wo-${Date.now()}`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      category: 'Maintenance',
+      source: 'AI Supervisor',
+      asset: asset,
+      plant: 'Plant Alpha (Gulf Coast)',
+      severity: 'Info',
+      correlationId: `corr-wo-${asset}`,
+      message: `Generated Work Order for ${asset}: ${desc}`,
+      aiDecision: 'Auto-dispatched Work Order to CMMS Maintenance Queue',
+      priority: 1,
+    });
+    setProactiveToast({
+      title: `✅ Work Order Dispatched (${asset})`,
+      desc: `Work Order created and dispatched to CMMS Maintenance Queue. RUL recalculated.`,
+    });
+  };
+
   const renderWorkspace = () => {
     switch (page) {
-      case 'command-center': return <CommandCenter tele={tele} onReportIncident={() => setIncidentModalOpen(true)} />;
-      case 'operations': return <OperationsCenter tele={tele} />;
-      case 'industrial-twin': return <IndustrialTwin tele={tele} />;
-      case 'ai-command': return <AICommandCenter />;
+      case 'command-center': return <CommandCenter tele={tele} onReportIncident={() => setIncidentModalOpen(true)} onNavigateToAsset={handleNavigateToAsset} onNavigateToPage={handleNavigateToPage} onGenerateWorkOrder={handleGenerateWorkOrder} />;
+      case 'operations': return <OperationsCenter tele={tele} onNavigateToAsset={handleNavigateToAsset} />;
+      case 'industrial-twin': return <IndustrialTwin tele={tele} initialSelectedAssetId={selectedAssetId} />;
+      case 'ai-command': return <AICommandCenter onGenerateWorkOrder={handleGenerateWorkOrder} />;
       case 'incidents': return <IncidentsWorkspace onReportIncident={() => setIncidentModalOpen(true)} />;
       case 'vision-intel': return <VisionIntelligence />;
       case 'agent-orch': return <AgentOrchestration />;
-      case 'assets': return <AssetsWorkspace tele={tele} onAddAsset={() => setAssetModalOpen(true)} />;
+      case 'assets': return <AssetsWorkspace tele={tele} onAddAsset={() => setAssetModalOpen(true)} onNavigateToAsset={handleNavigateToAsset} />;
       case 'platform-ops': return <PlatformOps health={health} />;
-      case 'ops-intelligence': return <OpsIntelligence tele={tele} />;
+      case 'ops-intelligence': return <OpsIntelligence tele={tele} onNavigateToPage={handleNavigateToPage} onGenerateWorkOrder={handleGenerateWorkOrder} />;
       case 'permits': return <PermitsWorkspace />;
       case 'maintenance': return <MaintenanceWorkspace />;
-      case 'risk': return <RiskWorkspace />;
+      case 'risk': return <RiskWorkspace onNavigateToAsset={handleNavigateToAsset} />;
       case 'inspections': return <InspectionsWorkspace />;
       case 'executive': return <ExecutiveInsights />;
       case 'settings': return <SettingsWorkspace session={userSession} />;
-      default: return <CommandCenter tele={tele} onReportIncident={() => setIncidentModalOpen(true)} />;
+      default: return <CommandCenter tele={tele} onReportIncident={() => setIncidentModalOpen(true)} onNavigateToAsset={handleNavigateToAsset} onNavigateToPage={handleNavigateToPage} onGenerateWorkOrder={handleGenerateWorkOrder} />;
     }
   };
 
@@ -203,7 +234,7 @@ const App: React.FC = () => {
     <div className="h-screen flex flex-col bg-[#09090b] text-zinc-200 overflow-hidden font-sans relative">
       {/* Proactive AI Alert Toast Banner */}
       {proactiveToast && (
-        <div className="absolute top-14 right-6 z-50 max-w-md bg-amber-950/90 border border-amber-500/40 rounded-2xl p-4 shadow-2xl backdrop-blur-md animate-bounce">
+        <div className="absolute top-14 right-6 z-50 max-w-md bg-amber-950/95 border border-amber-500/40 rounded-2xl p-4 shadow-2xl backdrop-blur-md">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-amber-400" />
@@ -214,10 +245,22 @@ const App: React.FC = () => {
             </button>
           </div>
           <p className="text-[12px] text-zinc-200 mt-1.5 leading-relaxed">{proactiveToast.desc}</p>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              onClick={() => { handleGenerateWorkOrder('PUMP-P102', 'Bearing race replacement'); }}
+              className="px-2.5 py-1 rounded bg-amber-500 text-black font-bold text-[10px] hover:bg-amber-400"
+            >
+              Generate Work Order
+            </button>
+            <button
+              onClick={() => { handleNavigateToAsset('pump'); setProactiveToast(null); }}
+              className="px-2.5 py-1 rounded bg-white/[0.08] hover:bg-white/[0.15] text-white font-semibold text-[10px]"
+            >
+              View Digital Twin
+            </button>
             <button
               onClick={() => { setPage('ai-command'); setProactiveToast(null); }}
-              className="px-3 py-1 rounded-lg bg-amber-500 text-black font-semibold text-[10px]"
+              className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[10px]"
             >
               Open AI Command Center
             </button>

@@ -19,7 +19,13 @@ import { Toolbar, ToolBtn, ToolSep, Chart, Metric } from './components/common/Co
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 1: COMMAND CENTER
 // ═══════════════════════════════════════════════════════════
-export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?: () => void }> = ({ tele, onReportIncident }) => {
+export const CommandCenter: React.FC<{
+  tele: TelemetryPoint[];
+  onReportIncident?: () => void;
+  onNavigateToAsset?: (assetId: string) => void;
+  onNavigateToPage?: (page: any) => void;
+  onGenerateWorkOrder?: (asset: string, desc: string) => void;
+}> = ({ tele, onReportIncident, onNavigateToAsset, onNavigateToPage, onGenerateWorkOrder }) => {
   const l = tele[tele.length - 1] || { vib: 11.8, temp: 94.1, psi: 242, kw: 330, flow: 84, t: '09:47' };
   return (
     <div className="h-full flex flex-col bg-[#09090b]">
@@ -31,8 +37,8 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
         <ToolBtn onClick={onReportIncident} className="!bg-red-600/80 !text-white hover:!bg-red-500">
           <AlertTriangle size={12} /> Report Incident
         </ToolBtn>
-        <ToolBtn><RefreshCw size={12} /> Refresh</ToolBtn>
-        <ToolBtn><Maximize2 size={12} /></ToolBtn>
+        <ToolBtn onClick={() => onNavigateToPage?.('ai-command')}><Brain size={12} /> Open AI Command</ToolBtn>
+        <ToolBtn onClick={() => onNavigateToAsset?.('pump')}><Layers size={12} /> Focus Digital Twin</ToolBtn>
       </Toolbar>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
@@ -56,14 +62,14 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
 
         <div className="grid grid-cols-6 gap-3">
           {[
-            { l: 'Safety Index', v: '94.2', u: '/100', c: 'text-emerald-400', sub: '+2.1% vs yesterday' },
-            { l: 'Incident Rate (TRIR)', v: '0.18', u: '', c: 'text-emerald-400', sub: 'Zero OSHA recordables' },
-            { l: 'Active Risks', v: '2', u: 'High', c: 'text-amber-400', sub: 'DC-101 Loop' },
-            { l: 'Inspection Pass', v: '98.4', u: '%', c: 'text-emerald-400', sub: '122 audited' },
-            { l: 'Asset Health', v: '91.2', u: '%', c: 'text-white', sub: '47 monitored' },
-            { l: 'Permit Compliance', v: '100', u: '%', c: 'text-emerald-400', sub: '28 active LOTO' },
+            { l: 'Safety Index', v: '94.2', u: '/100', c: 'text-emerald-400', sub: '+2.1% vs yesterday', onClick: () => onNavigateToPage?.('ops-intelligence') },
+            { l: 'Incident Rate (TRIR)', v: '0.18', u: '', c: 'text-emerald-400', sub: 'Zero OSHA recordables', onClick: () => onNavigateToPage?.('incidents') },
+            { l: 'Active Risks', v: '2', u: 'High', c: 'text-amber-400', sub: 'DC-101 Loop', onClick: () => onNavigateToPage?.('risk') },
+            { l: 'Inspection Pass', v: '98.4', u: '%', c: 'text-emerald-400', sub: '122 audited', onClick: () => onNavigateToPage?.('inspections') },
+            { l: 'Asset Health', v: '91.2', u: '%', c: 'text-white', sub: '47 monitored', onClick: () => onNavigateToPage?.('assets') },
+            { l: 'Permit Compliance', v: '100', u: '%', c: 'text-emerald-400', sub: '28 active LOTO', onClick: () => onNavigateToPage?.('permits') },
           ].map(k => (
-            <div key={k.l} className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div key={k.l} onClick={k.onClick} className="p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] cursor-pointer transition-colors">
               <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1 font-semibold">{k.l}</p>
               <p className={`text-xl font-bold ${k.c}`}>{k.v}<span className="text-xs text-zinc-500 font-normal ml-0.5">{k.u}</span></p>
               <p className="text-[10px] text-zinc-600 mt-1">{k.sub}</p>
@@ -81,23 +87,26 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
               <span className="text-[10px] text-zinc-600">3 Pending</span>
             </div>
             {[
-              { pri: 'high', title: 'Replace bearing assembly — Pump P-102', summary: 'Vibration velocity (11.8 mm/s) trending toward 14.0 mm/s limit. RUL: 18 days. Bearing wear: 72%.', agent: 'Maintenance Agent', confidence: 94, time: '2m' },
-              { pri: 'medium', title: 'Audit Zone B contractor badges', summary: 'Contractor C-4412 detected with expired badge near reactor. Gate B access auto-revoked.', agent: 'Contractor Agent', confidence: 92, time: '8m' },
-              { pri: 'low', title: 'Schedule lubrication — Compressor C-03', summary: 'PM interval threshold reached in 6 days. Auto-escalation configured in CMMS.', agent: 'Maintenance Agent', confidence: 96, time: '14m' },
+              { pri: 'high', title: 'Replace bearing assembly — Pump P-102', summary: 'Vibration velocity (11.8 mm/s) trending toward 14.0 mm/s limit. RUL: 18 days. Bearing wear: 72%.', agent: 'Maintenance Agent', confidence: 94, action: 'Generate WO', onAct: () => onGenerateWorkOrder?.('PUMP-P102', 'Bearing race replacement') },
+              { pri: 'medium', title: 'Audit Zone B contractor badges', summary: 'Contractor C-4412 detected with expired badge near reactor. Gate B access auto-revoked.', agent: 'Contractor Agent', confidence: 92, action: 'Inspect Vision', onAct: () => onNavigateToPage?.('vision-intel') },
+              { pri: 'low', title: 'Schedule lubrication — Compressor C-03', summary: 'PM interval threshold reached in 6 days. Auto-escalation configured in CMMS.', agent: 'Maintenance Agent', confidence: 96, action: 'View Asset', onAct: () => onNavigateToAsset?.('comp') },
             ].map((r, i) => (
-              <div key={i} className="p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] transition-colors cursor-pointer group">
+              <div key={i} className="p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] transition-colors group">
                 <div className="flex items-start gap-2.5">
                   <span className={`w-1.5 h-1.5 rounded-full mt-2 shrink-0 ${r.pri === 'high' ? 'bg-amber-400' : r.pri === 'medium' ? 'bg-indigo-400' : 'bg-zinc-600'}`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors">{r.title}</p>
+                    <p className="text-[13px] font-medium text-zinc-200">{r.title}</p>
                     <p className="text-[12px] text-zinc-500 mt-1 leading-relaxed">{r.summary}</p>
-                    <div className="flex items-center gap-3 mt-2 text-[10px] text-zinc-600">
-                      <span className="flex items-center gap-1"><Brain size={10} />{r.agent}</span>
-                      <span>{r.confidence}% conf.</span>
-                      <span>{r.time} ago</span>
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.04]">
+                      <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                        <span className="flex items-center gap-1"><Brain size={10} />{r.agent}</span>
+                        <span>{r.confidence}% conf.</span>
+                      </div>
+                      <button onClick={r.onAct} className="px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px]">
+                        {r.action}
+                      </button>
                     </div>
                   </div>
-                  <ChevronRight size={14} className="text-zinc-700 group-hover:text-zinc-400 mt-1 transition-colors" />
                 </div>
               </div>
             ))}
@@ -627,9 +636,9 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 5: INDUSTRIAL TWIN
 // ═══════════════════════════════════════════════════════════
-export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
+export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[]; initialSelectedAssetId?: string }> = ({ tele, initialSelectedAssetId }) => {
   const l = tele[tele.length - 1] || { temp: 94.1, vib: 11.8 };
-  const [selected, setSelected] = useState('pump');
+  const [selected, setSelected] = useState(initialSelectedAssetId || 'pump');
   const assets = [
     { id: 'reactor', label: 'Reactor B', x: 180, y: 130, health: 97, temp: '340°C', st: 'Running', rul: '94d' },
     { id: 'pump', label: 'Pump P-102', x: 400, y: 200, health: 74, temp: `${l.temp}°C`, st: 'Warning', rul: '18d' },
@@ -703,7 +712,7 @@ export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) =
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 6: AI COMMAND CENTER
 // ═══════════════════════════════════════════════════════════
-export const AICommandCenter: React.FC = () => {
+export const AICommandCenter: React.FC<{ onGenerateWorkOrder?: (asset: string, desc: string) => void }> = ({ onGenerateWorkOrder }) => {
   const steps = [
     { text: 'Detected vibration anomaly on Pump P-102', status: 'done', detail: 'Reading 11.8 mm/s, trending toward ISO limit.' },
     { text: 'Queried CMMS maintenance history from PostgreSQL', status: 'done', detail: 'PM overdue by 14 days. Work order WO-7821 un-escalated.' },
@@ -718,13 +727,25 @@ export const AICommandCenter: React.FC = () => {
         <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">AI COMMAND CENTER</span>
         <ToolSep />
         <span className="text-[10px] text-indigo-400 font-medium">10 Autonomous Agents Active</span>
+        <div className="flex-1" />
+        <ToolBtn onClick={() => onGenerateWorkOrder?.('PUMP-P102', 'Bearing race replacement')} className="!bg-indigo-600 !text-white">
+          <Wrench size={12} /> Dispatch WO-7821
+        </ToolBtn>
       </Toolbar>
 
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 p-5 space-y-4 overflow-y-auto">
-          <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20">
-            <h2 className="text-sm font-bold text-white">Active Reasoning Stream: Pump P-102 Anomaly</h2>
-            <p className="text-xs text-zinc-400 mt-1">Multi-agent supervisor is conducting 5-Whys RCA, evidence correlation, and ISO 45001 compliance audit.</p>
+          <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex justify-between items-center">
+            <div>
+              <h2 className="text-sm font-bold text-white">Active Reasoning Stream: Pump P-102 Anomaly</h2>
+              <p className="text-xs text-zinc-400 mt-1">Multi-agent supervisor is conducting 5-Whys RCA, evidence correlation, and ISO 45001 compliance audit.</p>
+            </div>
+            <button
+              onClick={() => onGenerateWorkOrder?.('PUMP-P102', 'Bearing race replacement')}
+              className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30"
+            >
+              Dispatch Work Order WO-7821
+            </button>
           </div>
           <div className="space-y-2">
             {steps.map((s, i) => (
