@@ -34,6 +34,96 @@ export class RealtimeApiClient {
     }
   }
 
+  // Fetch initial Assets list from REST API
+  public async getAssets(): Promise<any[]> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/assets`, { signal: AbortSignal.timeout(4000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API getAssets fallback:', err);
+    }
+    return [];
+  }
+
+  // Create new Asset via REST API
+  public async createAsset(asset: any): Promise<any> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/assets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asset),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API createAsset fallback:', err);
+    }
+    return asset;
+  }
+
+  // Fetch Incidents list from REST API
+  public async getIncidents(): Promise<any[]> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/incidents`, { signal: AbortSignal.timeout(4000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API getIncidents fallback:', err);
+    }
+    return [];
+  }
+
+  // Create new Incident via REST API
+  public async createIncident(incident: any): Promise<any> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/incidents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(incident),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API createIncident fallback:', err);
+    }
+    return incident;
+  }
+
+  // Fetch Work Orders from REST API
+  public async getWorkOrders(): Promise<any[]> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/maintenance/workorders`, { signal: AbortSignal.timeout(4000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API getWorkOrders fallback:', err);
+    }
+    return [];
+  }
+
+  // Create Work Order via REST API
+  public async createWorkOrder(wo: any): Promise<any> {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/maintenance/workorders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(wo),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn('API createWorkOrder fallback:', err);
+    }
+    return wo;
+  }
+
   // Dynamic Prompt-driven AI Query
   public async queryAI(prompt: string, model: string = 'gpt-4o'): Promise<string> {
     const trimmed = prompt.trim();

@@ -110,6 +110,25 @@ const App: React.FC = () => {
   const health = useHealth();
   const tele = useTelemetry();
 
+  // Fetch initial persistent data from Go REST API backend
+  useEffect(() => {
+    let mounted = true;
+    const fetchBackendData = async () => {
+      const [fetchedAssets, fetchedIncidents, fetchedWos] = await Promise.all([
+        realtimeApi.getAssets(),
+        realtimeApi.getIncidents(),
+        realtimeApi.getWorkOrders(),
+      ]);
+      if (mounted) {
+        if (fetchedAssets && fetchedAssets.length > 0) setAssetsList(fetchedAssets);
+        if (fetchedIncidents && fetchedIncidents.length > 0) setIncidentsList(fetchedIncidents);
+        if (fetchedWos && fetchedWos.length > 0) setWorkOrdersList(fetchedWos);
+      }
+    };
+    fetchBackendData();
+    return () => { mounted = false; };
+  }, []);
+
   // Unified Event Bus subscription for real-time proactive push
   useEffect(() => {
     const unsubscribe = eventBus.subscribe((evt) => {
@@ -212,8 +231,8 @@ const App: React.FC = () => {
     setPage(targetPage);
   };
 
-  const handleGenerateWorkOrder = (asset: string, desc: string) => {
-    const newWo: WorkOrder = {
+  const handleGenerateWorkOrder = async (asset: string, desc: string) => {
+    const rawWo: WorkOrder = {
       id: `WO-${Math.floor(7825 + Math.random() * 100)}`,
       desc: desc,
       asset: asset,
@@ -221,7 +240,8 @@ const App: React.FC = () => {
       rul: '18d',
       st: 'Dispatched',
     };
-    setWorkOrdersList(prev => [newWo, ...prev]);
+    const savedWo = await realtimeApi.createWorkOrder(rawWo);
+    setWorkOrdersList(prev => [savedWo, ...prev]);
 
     eventBus.emit({
       eventId: `evt-wo-${Date.now()}`,
@@ -492,15 +512,16 @@ const App: React.FC = () => {
       <CreateAssetModal
         isOpen={assetModalOpen}
         onClose={() => setAssetModalOpen(false)}
-        onCreate={(asset) => {
-          setAssetsList(prev => [asset, ...prev]);
+        onCreate={async (asset) => {
+          const savedAsset = await realtimeApi.createAsset(asset);
+          setAssetsList(prev => [savedAsset, ...prev]);
           eventBus.emit({
             category: 'Asset',
-            source: 'Assets Workspace',
-            asset: asset.name,
+            source: 'Go Asset Service (Persistence)',
+            asset: savedAsset.name,
             severity: 'Info',
-            correlationId: `corr-${asset.name}`,
-            message: `Registered asset ${asset.name} in location ${asset.loc}`,
+            correlationId: `corr-${savedAsset.name}`,
+            message: `Registered asset ${savedAsset.name} in location ${savedAsset.loc}`,
             priority: 1,
           });
         }}
@@ -509,15 +530,16 @@ const App: React.FC = () => {
       <ReportIncidentModal
         isOpen={incidentModalOpen}
         onClose={() => setIncidentModalOpen(false)}
-        onReport={(incident) => {
-          setIncidentsList(prev => [incident, ...prev]);
+        onReport={async (incident) => {
+          const savedInc = await realtimeApi.createIncident(incident);
+          setIncidentsList(prev => [savedInc, ...prev]);
           eventBus.emit({
             category: 'Incident',
             source: 'Incidents Workspace',
-            asset: incident.asset,
+            asset: savedInc.asset,
             severity: 'Warning',
-            correlationId: incident.id,
-            message: `Dispatched incident ${incident.id}: ${incident.title}`,
+            correlationId: savedInc.id,
+            message: `Dispatched incident ${savedInc.id}: ${savedInc.title}`,
             priority: 3,
           });
         }}

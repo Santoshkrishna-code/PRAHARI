@@ -193,6 +193,177 @@ func main() {
 	})
 
 	// ═══════════════════════════════════════════════════════════
+	// IN-MEMORY PERSISTENT STORE (CONNECTED TO EVENT BUS & WS)
+	// ═══════════════════════════════════════════════════════════
+	var (
+		assetsMu    sync.RWMutex
+		assetsStore = []map[string]interface{}{
+			{"id": "asset-102", "name": "Pump P-102", "loc": "DC-101 Recirc", "type": "Centrifugal Pump", "health": 74, "rul": "18d", "st": "Warning", "owner": "Mechanical Team", "vib": 11.8, "temp": 94.1},
+			{"id": "asset-88", "name": "Valve V-88", "loc": "DC-101 Isol", "type": "Gate Valve", "health": 98, "rul": "N/A", "st": "Locked", "owner": "Safety Team", "vib": "--", "temp": "--"},
+			{"id": "asset-04", "name": "Heat Exchanger HX-04", "loc": "DC-101 Cool", "type": "Shell & Tube", "health": 91, "rul": "62d", "st": "Running", "owner": "Process Team", "vib": 3.2, "temp": 88},
+			{"id": "asset-03", "name": "Compressor C-03", "loc": "DC-102", "type": "Reciprocating", "health": 96, "rul": "84d", "st": "Running", "owner": "Mechanical Team", "vib": 4.1, "temp": 72},
+		}
+
+		incidentsMu    sync.RWMutex
+		incidentsStore = []map[string]interface{}{
+			{"id": "INC-2026-0447", "title": "Pump P-102 Vibration Anomaly", "desc": "Vibration probe threshold exceeded during high-pressure run.", "sev": "Warning", "asset": "Pump P-102", "st": "Under Investigation", "time": "14:10"},
+			{"id": "INC-2026-0442", "title": "Contractor Badge Expiration Zone B", "desc": "Contractor C-4412 detected with expired safety badge.", "sev": "Info", "asset": "Gate B", "st": "Resolved", "time": "12:30"},
+		}
+
+		woMu    sync.RWMutex
+		woStore = []map[string]interface{}{
+			{"id": "WO-7821", "desc": "Bearing replacement and lubrication service", "asset": "P-102", "pri": "Critical", "rul": "18d", "st": "Overdue"},
+			{"id": "WO-7822", "desc": "Vibration probe recalibration", "asset": "P-102", "pri": "High", "rul": "18d", "st": "Assigned"},
+			{"id": "WO-7823", "desc": "Quarterly compressor inspection", "asset": "C-03", "pri": "Medium", "rul": "84d", "st": "Scheduled"},
+			{"id": "WO-7824", "desc": "Boiler tube thickness measurement", "asset": "Boiler A", "pri": "Medium", "rul": "71d", "st": "Scheduled"},
+		}
+	)
+
+	// REST Endpoint: Assets (GET & POST)
+	http.HandleFunc("/api/assets", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method == "POST" {
+			var newAsset map[string]interface{}
+			if err := json.NewDecoder(r.Body).Decode(&newAsset); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if newAsset["id"] == nil || newAsset["id"] == "" {
+				newAsset["id"] = fmt.Sprintf("asset-%d", time.Now().UnixNano()%10000)
+			}
+			if newAsset["health"] == nil {
+				newAsset["health"] = 100
+			}
+			if newAsset["rul"] == nil {
+				newAsset["rul"] = "120d"
+			}
+			if newAsset["st"] == nil {
+				newAsset["st"] = "Running"
+			}
+
+			assetsMu.Lock()
+			assetsStore = append([]map[string]interface{}{newAsset}, assetsStore...)
+			assetsMu.Unlock()
+
+			// Broadcast AssetCreated Event to WebSocket Clients
+			assetName, _ := newAsset["name"].(string)
+			assetLoc, _ := newAsset["loc"].(string)
+			evt := IndustrialEvent{
+				EventID:       fmt.Sprintf("evt-asset-%d", time.Now().UnixNano()),
+				Timestamp:     time.Now().Format("15:04:05"),
+				Category:      "Asset",
+				Source:        "Go Asset Persistence Service",
+				Asset:         assetName,
+				Plant:         "Plant Alpha (Gulf Coast)",
+				Severity:      "Info",
+				CorrelationID: fmt.Sprintf("corr-%s", assetName),
+				Message:       fmt.Sprintf("Registered asset %s in location %s", assetName, assetLoc),
+				Priority:      1,
+			}
+			data, _ := json.Marshal(evt)
+			hub.broadcast <- data
+
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(newAsset)
+			return
+		}
+
+		assetsMu.RLock()
+		defer assetsMu.RUnlock()
+		json.NewEncoder(w).Encode(assetsStore)
+	})
+
+	// REST Endpoint: Incidents (GET & POST)
+	http.HandleFunc("/api/incidents", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method == "POST" {
+			var newInc map[string]interface{}
+			if err := json.NewDecoder(r.Body).Decode(&newInc); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if newInc["id"] == nil || newInc["id"] == "" {
+				newInc["id"] = fmt.Sprintf("INC-2026-%d", 1000+rand.Intn(9000))
+			}
+			if newInc["st"] == nil {
+				newInc["st"] = "Under Investigation"
+			}
+			if newInc["time"] == nil {
+				newInc["time"] = time.Now().Format("15:04")
+			}
+
+			incidentsMu.Lock()
+			incidentsStore = append([]map[string]interface{}{newInc}, incidentsStore...)
+			incidentsMu.Unlock()
+
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(newInc)
+			return
+		}
+
+		incidentsMu.RLock()
+		defer incidentsMu.RUnlock()
+		json.NewEncoder(w).Encode(incidentsStore)
+	})
+
+	// REST Endpoint: Maintenance Work Orders (GET & POST)
+	http.HandleFunc("/api/maintenance/workorders", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method == "POST" {
+			var newWO map[string]interface{}
+			if err := json.NewDecoder(r.Body).Decode(&newWO); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if newWO["id"] == nil || newWO["id"] == "" {
+				newWO["id"] = fmt.Sprintf("WO-%d", 7825+rand.Intn(100))
+			}
+			if newWO["st"] == nil {
+				newWO["st"] = "Dispatched"
+			}
+
+			woMu.Lock()
+			woStore = append([]map[string]interface{}{newWO}, woStore...)
+			woMu.Unlock()
+
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(newWO)
+			return
+		}
+
+		woMu.RLock()
+		defer woMu.RUnlock()
+		json.NewEncoder(w).Encode(woStore)
+	})
+
+	// ═══════════════════════════════════════════════════════════
 	// DASHBOARD AGGREGATOR SERVICE ENDPOINTS (SINGLE SOURCE OF TRUTH)
 	// ═══════════════════════════════════════════════════════════
 
