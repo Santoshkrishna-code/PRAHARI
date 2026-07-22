@@ -113,15 +113,17 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', h);
   }, []);
 
-  const handleLoginSuccess = (user: { name: string; email: string; role: UserRole; orgName: string; plantName: string }) => {
+  const handleLoginSuccess = (user: { name?: string; email?: string; role?: UserRole; orgName?: string; plantName?: string }) => {
+    const safeName = user?.name || 'Plant Manager';
+    const initials = safeName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2) || 'PM';
     setUserSession({
       ...userSession,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      orgName: user.orgName,
-      plantName: user.plantName,
-      avatar: user.name.split(' ').map(n => n[0]).join('').slice(0, 2),
+      name: safeName,
+      email: user?.email || 'admin@prahari-industrial.io',
+      role: user?.role || 'Plant Manager',
+      orgName: user?.orgName || 'Alpha Chemical Refinery Inc.',
+      plantName: user?.plantName || 'Plant Alpha (Gulf Coast)',
+      avatar: initials,
     });
     setAppView('workspace');
     setTourActive(true);
@@ -491,4 +493,56 @@ const App: React.FC = () => {
   );
 };
 
-createRoot(document.getElementById('root')!).render(<App />);
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('PRAHARI Unhandled Workspace Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#06080d] text-zinc-100 flex flex-col justify-center items-center p-6 font-sans">
+          <div className="max-w-md w-full bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 shadow-2xl text-center space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center mx-auto">
+              <AlertTriangle size={24} />
+            </div>
+            <h2 className="text-lg font-bold text-white">Workspace Exception Intercepted</h2>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              PRAHARI Error Boundary caught an exception during workspace render.
+            </p>
+            <div className="p-3 rounded-lg bg-black/50 border border-white/[0.06] text-left text-[11px] font-mono text-red-300 max-h-32 overflow-y-auto">
+              {this.state.error?.message || 'Unknown render error'}
+            </div>
+            <button
+              onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all w-full"
+            >
+              Reload Operational Control Center
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+createRoot(document.getElementById('root')!).render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
