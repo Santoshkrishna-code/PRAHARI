@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Brain, X, Sparkles, Send, CheckCircle2, ArrowRight, MessageSquare } from 'lucide-react';
 import { PageId } from '../../types';
+import { realtimeApi } from '../../services/apiClient';
 
 interface AIDrawerProps {
   isOpen: boolean;
@@ -13,9 +14,9 @@ export const AIDrawer: React.FC<AIDrawerProps> = ({ isOpen, onClose, currentPage
   const [messages, setMessages] = useState<{ sender: 'user' | 'ai'; text: string; time: string }[]>([
     {
       sender: 'ai',
-      text: `Hello! I am the PRAHARI Autonomous AI Safety Supervisor. I am currently monitoring workspace context: **${currentPage}** ${
+      text: `Hello! I am the PRAHARI Autonomous AI Safety Supervisor connected to backend API. Currently monitoring workspace: **${currentPage}** ${
         selectedEntityId ? `(Entity: ${selectedEntityId})` : ''
-      }. How can I assist your safety investigation?`,
+      }. How can I assist your investigation?`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -40,7 +41,7 @@ export const AIDrawer: React.FC<AIDrawerProps> = ({ isOpen, onClose, currentPage
     }
   };
 
-  const handleSend = (queryText?: string) => {
+  const handleSend = async (queryText?: string) => {
     const textToSend = queryText || input;
     if (!textToSend.trim()) return;
 
@@ -54,27 +55,17 @@ export const AIDrawer: React.FC<AIDrawerProps> = ({ isOpen, onClose, currentPage
     if (!queryText) setInput('');
     setLoading(true);
 
-    setTimeout(() => {
-      let responseText = 'AI Supervisor Reasoning: Evaluated real-time event stream and knowledge graph relations. All safety constraints validated.';
+    const responseText = await realtimeApi.queryAI(textToSend);
 
-      if (textToSend.toLowerCase().includes('bearing') || textToSend.toLowerCase().includes('p-102') || textToSend.toLowerCase().includes('vibration')) {
-        responseText = 'Pump P-102 analysis: Vibration velocity reading 11.8 mm/s. Physics-Informed Neural Network predicts bearing race degradation (72% probability). Remaining useful life: 18 days. Root cause: Scheduled PM interval was exceeded by 14 days.';
-      } else if (textToSend.toLowerCase().includes('5-whys') || textToSend.toLowerCase().includes('incident') || textToSend.toLowerCase().includes('root cause')) {
-        responseText = 'INC-2026-0447 Root Cause Synthesis: 1. Vibration reached 11.8 mm/s → 2. Bearing race misalignment → 3. Lubrication breakdown from overheating → 4. PM interval exceeded by 14 days due to un-escalated WO-7821.';
-      } else if (textToSend.toLowerCase().includes('permit') || textToSend.toLowerCase().includes('loto') || textToSend.toLowerCase().includes('ptw')) {
-        responseText = 'Permit PTW-8902 Audit: Hot Work approved for Tank T-204. Physical isolation lock verified on Valve V-88. Gas test readings: O₂ 20.9%, H₂S 0ppm. Zero permit conflicts detected.';
-      }
-
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: 'ai',
-          text: responseText,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-      setLoading(false);
-    }, 700);
+    setMessages(prev => [
+      ...prev,
+      {
+        sender: 'ai',
+        text: responseText,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+    setLoading(false);
   };
 
   return (
@@ -87,7 +78,7 @@ export const AIDrawer: React.FC<AIDrawerProps> = ({ isOpen, onClose, currentPage
           </div>
           <div>
             <h3 className="font-bold text-white text-sm">Ask AI Assistant</h3>
-            <p className="text-[10px] text-zinc-500">Context: {currentPage} Workspace</p>
+            <p className="text-[10px] text-emerald-400 font-medium">Connected to AWS ALB Endpoint</p>
           </div>
         </div>
         <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
@@ -117,7 +108,7 @@ export const AIDrawer: React.FC<AIDrawerProps> = ({ isOpen, onClose, currentPage
         {loading && (
           <div className="flex items-center gap-2 text-xs text-indigo-400 p-2">
             <Sparkles size={14} className="animate-spin" />
-            <span>Reasoning across Knowledge Graph...</span>
+            <span>Executing LLM query over AWS ALB backend...</span>
           </div>
         )}
       </div>

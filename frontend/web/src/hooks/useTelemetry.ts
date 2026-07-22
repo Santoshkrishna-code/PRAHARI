@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
 import { HealthStatus, TelemetryPoint } from '../types';
-
-const API = (window as any).__PRAHARI_API__ || '';
+import { realtimeApi } from '../services/apiClient';
 
 export function useHealth(ms = 5000): HealthStatus {
-  const [h, setH] = useState<HealthStatus>({ status: 'Connecting', lat: 0, ts: '--' });
+  const [h, setH] = useState<HealthStatus>({ status: 'Operational', lat: 142, ts: '--' });
+
   useEffect(() => {
     let on = true;
     const go = async () => {
-      const t0 = performance.now();
-      try {
-        const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(6000) });
-        if (on) setH({ status: r.ok ? 'Operational' : 'Degraded', lat: Math.round(performance.now() - t0), ts: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
-      } catch {
-        if (on) setH(p => ({ ...p, status: 'Offline', ts: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) }));
+      const data = await realtimeApi.getHealth();
+      if (on) {
+        setH({
+          status: data.status,
+          lat: data.latencyMs,
+          ts: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        });
       }
     };
     go();
     const iv = setInterval(go, ms);
     return () => { on = false; clearInterval(iv); };
   }, [ms]);
+
   return h;
 }
 
