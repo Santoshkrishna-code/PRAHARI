@@ -272,6 +272,64 @@ func main() {
 		})
 	})
 
+	// 4. Full Audit Package Export Endpoint
+	http.HandleFunc("/api/compliance/export", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Disposition", "attachment; filename=\"PRAHARI_Enterprise_Audit_Package_2026-07-22.json\"")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		auditPackage := map[string]interface{}{
+			"reportMetadata": map[string]interface{}{
+				"title":           "PRAHARI Enterprise ISO 45001 & OSHA Audit Package",
+				"generatedAt":     time.Now().Format(time.RFC3339),
+				"organization":    "Alpha Chemical Refinery Inc.",
+				"plant":           "Plant Alpha (Gulf Coast Site)",
+				"auditHash":       "0x9f8b7a6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a",
+				"verifiedByAgent": "Multi-Agent AI Compliance Supervisor",
+			},
+			"executiveSummary": map[string]interface{}{
+				"complianceScore": 97.6,
+				"status":          "GOOD",
+				"totalVerifiedFiles": 1284,
+				"trirIncidentRate": 0.18,
+			},
+			"standards": []map[string]interface{}{
+				{"std": "ISO 45001", "score": "98%", "clauses": "42/45 Compliant"},
+				{"std": "OSHA 29 CFR 1910", "score": "95%", "clauses": "118/120 Requirements Met"},
+				{"std": "Internal EHS SOP", "score": "100%", "clauses": "Fully Verified"},
+				{"std": "Environmental Protection", "score": "96%", "clauses": "EPA Compliant"},
+			},
+			"heatmap": []map[string]interface{}{
+				{"zone": "Zone A (Main Line)", "score": "98%", "status": "Compliant"},
+				{"zone": "Zone B (Reactor North)", "score": "92%", "status": "Attention"},
+				{"zone": "Tank Farm T-204", "score": "100%", "status": "Optimal"},
+				{"zone": "Utilities & Steam", "score": "95%", "status": "Compliant"},
+				{"zone": "Warehouse Storage", "score": "89%", "status": "Drill Due"},
+			},
+			"aiActionPlan": map[string]interface{}{
+				"verifiedChanges": []string{
+					"2 contractor certifications expire this week (Badge C-4412 auto-revoked).",
+					"Emergency drill due in 7 days (Warehouse Zone C).",
+					"PPE compliance index increased from 94% to 97% across Zone B.",
+				},
+				"recommendations": []string{
+					"Schedule Warehouse emergency response drill before Friday.",
+					"Renew contractor medical certification for C-4412.",
+					"Upload missing permit attachment for PTW-8903.",
+				},
+			},
+		}
+
+		json.NewEncoder(w).Encode(auditPackage)
+	})
+
 	// Real-time Platform Health & Observability Metrics
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
