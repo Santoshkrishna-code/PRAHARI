@@ -142,7 +142,10 @@ const App: React.FC = () => {
       <LandingPage
         onGetStarted={() => setAppView('onboarding')}
         onLogin={() => setAppView('login')}
-        onDemoMode={handleDemoLaunch}
+        onDemoMode={(role: string) => {
+          // Direct demo clicks to authentication login view
+          setAppView('login');
+        }}
       />
     );
   }
