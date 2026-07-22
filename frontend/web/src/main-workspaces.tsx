@@ -278,12 +278,176 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 3: EXECUTIVE INSIGHTS
 // ═══════════════════════════════════════════════════════════
-export const InspectionsWorkspace: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">INSPECTIONS AUDIT CHECKLISTS</span></Toolbar>
-    <div className="p-5 text-xs text-zinc-400">122 Compliance Audits Passed This Month</div>
-  </div>
-);
+export const InspectionsWorkspace: React.FC = () => {
+  const [filterTab, setFilterTab] = useState<'all' | 'pending' | 'overdue' | 'failed'>('all');
+
+  const inspectionsList = [
+    { id: 'AUD-9901', name: 'PPE Hardhat & Goggles Audit', area: 'Zone B North', inspector: 'Harish M.', status: 'Pending', due: 'Today (16:00)', sev: 'Medium', score: '98%' },
+    { id: 'AUD-9902', name: 'Fire Safety & Hydrant Pressure', area: 'Boiler Area A', inspector: 'Priya S.', status: 'Passed', due: 'Completed', sev: 'Normal', score: '95%' },
+    { id: 'AUD-9903', name: 'Electrical MCC Panel Inspection', area: 'MCC Room 7B', inspector: 'Rahul K.', status: 'Overdue', due: '2 Days Ago', sev: 'Critical', score: '88%' },
+    { id: 'AUD-9904', name: 'Emergency Exit Door Clearance', area: 'Warehouse Zone C', inspector: 'John D.', status: 'Failed', due: 'Today', sev: 'High', score: '72%' },
+    { id: 'AUD-9905', name: 'Hazardous Chemical Storage Audit', area: 'Tank Farm T-204', inspector: 'Suresh P.', status: 'Passed', due: 'Completed', sev: 'Normal', score: '99%' },
+    { id: 'AUD-9906', name: 'Scaffolding & Rigging Safety Audit', area: 'Reactor Complex B', inspector: 'Harish M.', status: 'Pending', due: 'Tomorrow', sev: 'Medium', score: '96%' },
+  ];
+
+  const filtered = inspectionsList.filter(i => {
+    if (filterTab === 'pending') return i.status === 'Pending';
+    if (filterTab === 'overdue') return i.status === 'Overdue';
+    if (filterTab === 'failed') return i.status === 'Failed';
+    return true;
+  });
+
+  return (
+    <div className="h-full flex flex-col bg-[#09090b]">
+      <Toolbar>
+        <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INSPECTIONS & COMPLIANCE AUDIT CENTER</span>
+        <ToolSep />
+        <ToolBtn active={filterTab === 'all'} onClick={() => setFilterTab('all')}>All (139)</ToolBtn>
+        <ToolBtn active={filterTab === 'pending'} onClick={() => setFilterTab('pending')}>Pending (14)</ToolBtn>
+        <ToolBtn active={filterTab === 'overdue'} onClick={() => setFilterTab('overdue')}>Overdue (3)</ToolBtn>
+        <ToolBtn active={filterTab === 'failed'} onClick={() => setFilterTab('failed')}>Failed (2)</ToolBtn>
+        <div className="flex-1" />
+        <ToolBtn className="!bg-indigo-600 !text-white"><Plus size={12} /> Schedule New Audit</ToolBtn>
+        <ToolBtn><Download size={12} /> Export CSV</ToolBtn>
+      </Toolbar>
+
+      <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        {/* 1. Executive Summary KPIs */}
+        <div className="grid grid-cols-6 gap-3">
+          {[
+            { l: 'Completed Today', v: '18', c: 'text-white', sub: 'On track' },
+            { l: 'Completed This Month', v: '122', c: 'text-emerald-400', sub: '98.4% pass' },
+            { l: 'Pending Audits', v: '14', c: 'text-amber-400', sub: 'Due in 24h' },
+            { l: 'Overdue Audits', v: '3', c: 'text-red-400', sub: 'Requires escalation' },
+            { l: 'Failed Checklists', v: '2', c: 'text-red-400', sub: 'CAPA generated' },
+            { l: 'Compliance Score', v: '97.8%', c: 'text-emerald-400', sub: '↑ +1.2% this week' },
+          ].map(k => (
+            <div key={k.l} className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1 font-semibold">{k.l}</p>
+              <p className={`text-xl font-bold ${k.c}`}>{k.v}</p>
+              <p className="text-[10px] text-zinc-600 mt-1">{k.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 2. AI Inspector Summary & Advice */}
+        <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-indigo-400" />
+              <h3 className="text-sm font-bold text-white">AI Inspector Briefing & Recommended Action</h3>
+            </div>
+            <span className="text-[10px] text-zinc-400">Model: PRAHARI Inspection-v2</span>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 text-xs leading-relaxed text-zinc-300">
+            <div>
+              <p className="font-semibold text-zinc-200 mb-1">Today's Inspection Summary:</p>
+              <ul className="space-y-1 text-zinc-400 list-disc list-inside">
+                <li>18 audits completed today with 97.8% overall compliance score.</li>
+                <li>Emergency exit blocked in Warehouse Zone C (Severity: High).</li>
+                <li>2 overdue inspections in MCC Room 7B (Electrical Panel 7B).</li>
+                <li>PPE compliance verified at 100% across Zone A main line.</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-zinc-200 mb-1">Actionable Recommendation:</p>
+              <p className="text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/[0.06]">
+                <strong>Prioritize Warehouse Zone C emergency exit clearance</strong> before the shift change at 16:00. Dispatched EHS Lead John D. to re-inspect.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Main Inspection Queue Table */}
+        <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-bold text-white">Active Audit Inspection Queue ({filtered.length})</span>
+            <span className="text-xs text-zinc-500">Showing filtered results</span>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
+              <span className="w-24">Audit ID</span>
+              <span className="flex-1">Inspection Checklist Name</span>
+              <span className="w-36">Plant Area / Zone</span>
+              <span className="w-28">Inspector</span>
+              <span className="w-24">Status</span>
+              <span className="w-28">Due Window</span>
+              <span className="w-16 text-right">Score</span>
+            </div>
+
+            {filtered.map(item => (
+              <div key={item.id} className="h-11 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
+                <span className="w-24 text-indigo-400 font-semibold font-mono text-[11px]">{item.id}</span>
+                <span className="flex-1 text-zinc-200 font-medium">{item.name}</span>
+                <span className="w-36 text-zinc-400">{item.area}</span>
+                <span className="w-28 text-zinc-400">{item.inspector}</span>
+                <span className="w-24">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                    item.status === 'Passed' ? 'bg-emerald-500/10 text-emerald-400' :
+                    item.status === 'Pending' ? 'bg-amber-500/15 text-amber-400' :
+                    item.status === 'Overdue' ? 'bg-red-500/15 text-red-400' : 'bg-red-500/20 text-red-300'
+                  }`}>
+                    {item.status}
+                  </span>
+                </span>
+                <span className="w-28 text-zinc-500 text-[11px]">{item.due}</span>
+                <span className="w-16 text-right font-bold text-white">{item.score}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4. Compliance Breakdown & Recent Findings Stream Grid */}
+        <div className="grid grid-cols-2 gap-5">
+          {/* Category Compliance Breakdown */}
+          <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
+            <span className="text-sm font-bold text-white block">Compliance Score by Safety Category</span>
+            {[
+              { cat: 'PPE & Personal Safety', score: 98, color: 'bg-emerald-500' },
+              { cat: 'Fire Safety & Extinguishers', score: 95, color: 'bg-emerald-500' },
+              { cat: 'Electrical MCC Systems', score: 96, color: 'bg-emerald-500' },
+              { cat: 'Mechanical Rigging & Hoisting', score: 100, color: 'bg-emerald-500' },
+              { cat: 'Hazardous Chemical Storage', score: 93, color: 'bg-amber-500' },
+              { cat: 'Emergency Evacuation Preparedness', score: 97, color: 'bg-emerald-500' },
+            ].map(c => (
+              <div key={c.cat} className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-zinc-300">{c.cat}</span>
+                  <span className="text-zinc-400 font-bold">{c.score}%</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-zinc-800">
+                  <div className={`h-1.5 rounded-full ${c.color}`} style={{ width: `${c.score}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Live Recent Findings Log */}
+          <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
+            <span className="text-sm font-bold text-white block">Recent Audit Findings & Non-Conformances</span>
+            <div className="space-y-2">
+              {[
+                { time: '14:10', msg: 'Emergency exit door blocked in Warehouse Zone C', sev: 'High', color: 'text-red-400' },
+                { time: '13:48', msg: 'Fire extinguisher pressure low on Hydrant HY-04', sev: 'Medium', color: 'text-amber-400' },
+                { time: '13:15', msg: 'PPE compliance 100% verified across Zone A Main Line', sev: 'Info', color: 'text-emerald-400' },
+                { time: '12:30', msg: 'Cable insulation wear detected on MCC-7B Panel', sev: 'High', color: 'text-red-400' },
+              ].map((f, i) => (
+                <div key={i} className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-xs">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-mono text-zinc-500 text-[10px]">{f.time}</span>
+                    <span className={`text-[10px] font-bold ${f.color}`}>{f.sev} Severity</span>
+                  </div>
+                  <span className="text-zinc-300 font-medium">{f.msg}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const ExecutiveInsights: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">

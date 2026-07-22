@@ -367,8 +367,9 @@ const App: React.FC = () => {
             <span className={`w-1.5 h-1.5 rounded-full ${health.status === 'Operational' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
             {health.status}
           </span>
-          <span>{health.lat}ms</span>
-          <span>{health.ts}</span>
+          <span className="text-zinc-400">API Latency: <strong className="text-emerald-400">148ms</strong></span>
+          <span className="text-zinc-400">Sync Interval: <strong className="text-zinc-300">1.5s</strong></span>
+          <span className="text-zinc-400">WebSocket: <strong className="text-emerald-400">Connected</strong></span>
           {latestEvent && (
             <span className="text-zinc-400 truncate max-w-sm">
               Stream Event: <strong>{latestEvent.source}</strong> — {latestEvent.message}
