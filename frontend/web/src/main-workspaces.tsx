@@ -311,6 +311,21 @@ export const InspectionsWorkspace: React.FC = () => {
     return true;
   });
 
+  const handleExportCSV = () => {
+    const headers = ["Audit ID", "Inspection Name", "Area", "Inspector", "Status", "Due Window", "Score"];
+    const rows = inspectionsList.map(i => [i.id, i.name, i.area, i.inspector, i.status, i.due, i.score]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PRAHARI_Audit_Inspections_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="h-full flex flex-col bg-[#09090b]">
       <Toolbar>
@@ -322,7 +337,7 @@ export const InspectionsWorkspace: React.FC = () => {
         <ToolBtn active={filterTab === 'failed'} onClick={() => setFilterTab('failed')}>Failed (2)</ToolBtn>
         <div className="flex-1" />
         <ToolBtn className="!bg-indigo-600 !text-white"><Plus size={12} /> Schedule New Audit</ToolBtn>
-        <ToolBtn><Download size={12} /> Export CSV</ToolBtn>
+        <ToolBtn onClick={handleExportCSV} className="hover:!text-white"><Download size={12} /> Export CSV</ToolBtn>
       </Toolbar>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
