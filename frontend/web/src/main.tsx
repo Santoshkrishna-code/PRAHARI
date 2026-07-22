@@ -64,6 +64,9 @@ const App: React.FC = () => {
   // Proactive AI Alert Toast
   const [proactiveToast, setProactiveToast] = useState<{ title: string; desc: string } | null>(null);
 
+  // Selected asset for Digital Twin context preservation
+  const [selectedAssetId, setSelectedAssetId] = useState<string>('pump');
+
   // Modals state
   const [assetModalOpen, setAssetModalOpen] = useState(false);
   const [incidentModalOpen, setIncidentModalOpen] = useState(false);
@@ -179,8 +182,6 @@ const App: React.FC = () => {
       />
     );
   }
-
-  const [selectedAssetId, setSelectedAssetId] = useState<string>('pump');
 
   const handleNavigateToAsset = (assetId: string) => {
     setSelectedAssetId(assetId);

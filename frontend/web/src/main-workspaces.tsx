@@ -178,10 +178,15 @@ export const CommandCenter: React.FC<{
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 2: OPERATIONS INTELLIGENCE
 // ═══════════════════════════════════════════════════════════
-export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
-  const l = tele[tele.length - 1] || { vib: 11.8, temp: 94.1 };
-  const vibTrend = tele.map(p => p.vib);
-  const tempTrend = tele.map(p => p.temp);
+export const OpsIntelligence: React.FC<{
+  tele?: TelemetryPoint[];
+  onNavigateToPage?: (page: any) => void;
+  onGenerateWorkOrder?: (asset: string, desc: string) => void;
+}> = ({ tele = [], onNavigateToPage, onGenerateWorkOrder }) => {
+  const safeTele = (tele && tele.length > 0) ? tele : [{ vib: 11.8, temp: 94.1, psi: 242, kw: 330, flow: 84, t: '09:47' }];
+  const l = safeTele[safeTele.length - 1];
+  const vibTrend = safeTele.map(p => p?.vib || 0);
+  const tempTrend = safeTele.map(p => p?.temp || 0);
 
   return (
     <div className="h-full flex flex-col bg-[#09090b]">
@@ -554,14 +559,15 @@ export const ExecutiveInsights: React.FC = () => (
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 4: OPERATIONS CENTER
 // ═══════════════════════════════════════════════════════════
-export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
-  const l = tele[tele.length - 1] || { vib: 11.8, temp: 94.1, psi: 242, kw: 330, flow: 84 };
+export const OperationsCenter: React.FC<{ tele?: TelemetryPoint[]; onNavigateToAsset?: (assetId: string) => void }> = ({ tele = [], onNavigateToAsset }) => {
+  const safeTele = (tele && tele.length > 0) ? tele : [{ vib: 11.8, temp: 94.1, psi: 242, kw: 330, flow: 84, t: '09:47' }];
+  const l = safeTele[safeTele.length - 1];
   const [chartMode, setChartMode] = useState<'vib' | 'temp' | 'psi' | 'kw'>('vib');
   const chartConfig = {
-    vib: { data: tele.map(p => p.vib), color: '#818cf8', threshold: 14, label: 'Vibration Velocity', unit: 'mm/s', alarm: 'ISO 10816 Limit @ 14.0' },
-    temp: { data: tele.map(p => p.temp), color: '#f59e0b', threshold: 100, label: 'Bearing Temperature', unit: '°C', alarm: 'Alarm @ 100°C' },
-    psi: { data: tele.map(p => p.psi), color: '#22d3ee', threshold: 260, label: 'Line Pressure', unit: 'PSI', alarm: 'High @ 260 PSI' },
-    kw: { data: tele.map(p => +p.kw), color: '#a78bfa', threshold: 370, label: 'Power Draw', unit: 'kW', alarm: 'Peak @ 370 kW' },
+    vib: { data: safeTele.map(p => p?.vib || 0), color: '#818cf8', threshold: 14, label: 'Vibration Velocity', unit: 'mm/s', alarm: 'ISO 10816 Limit @ 14.0' },
+    temp: { data: safeTele.map(p => p?.temp || 0), color: '#f59e0b', threshold: 100, label: 'Bearing Temperature', unit: '°C', alarm: 'Alarm @ 100°C' },
+    psi: { data: safeTele.map(p => p?.psi || 0), color: '#22d3ee', threshold: 260, label: 'Line Pressure', unit: 'PSI', alarm: 'High @ 260 PSI' },
+    kw: { data: safeTele.map(p => +(p?.kw || 0)), color: '#a78bfa', threshold: 370, label: 'Power Draw', unit: 'kW', alarm: 'Peak @ 370 kW' },
   }[chartMode];
 
   return (
@@ -636,8 +642,9 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
 // ═══════════════════════════════════════════════════════════
 // WORKSPACE 5: INDUSTRIAL TWIN
 // ═══════════════════════════════════════════════════════════
-export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[]; initialSelectedAssetId?: string }> = ({ tele, initialSelectedAssetId }) => {
-  const l = tele[tele.length - 1] || { temp: 94.1, vib: 11.8 };
+export const IndustrialTwin: React.FC<{ tele?: TelemetryPoint[]; initialSelectedAssetId?: string }> = ({ tele = [], initialSelectedAssetId }) => {
+  const safeTele = (tele && tele.length > 0) ? tele : [{ temp: 94.1, vib: 11.8 }];
+  const l = safeTele[safeTele.length - 1];
   const [selected, setSelected] = useState(initialSelectedAssetId || 'pump');
   const assets = [
     { id: 'reactor', label: 'Reactor B', x: 180, y: 130, health: 97, temp: '340°C', st: 'Running', rul: '94d' },
