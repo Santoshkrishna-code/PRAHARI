@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   LayoutDashboard, Activity, BarChart3, FileText, Radio, Box, Package, Wrench,
   Shield, AlertTriangle, ClipboardCheck, Target, Brain, Cpu, Eye, Server,
@@ -8,7 +8,7 @@ import {
   Download, Plus, RefreshCw, Maximize2, Layers, Thermometer, Gauge, BarChart,
   PieChart, Calendar, MapPin, Hash, ArrowRight, ExternalLink, Wifi, Database,
   Lock, Unlock, FileSearch, GitBranch, MoreHorizontal, LogOut, UserCheck,
-  SlidersHorizontal, Rewind, SkipForward, Users, HelpCircle
+  SlidersHorizontal, Rewind, SkipForward, Users, HelpCircle, List, Grid3X3
 } from 'lucide-react';
 
 import { TelemetryPoint, HealthStatus, Asset, Incident } from './types';
@@ -35,7 +35,6 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
       </Toolbar>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
-        {/* Executive Greeting Header */}
         <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
           <div>
             <div className="flex items-center gap-2">
@@ -54,7 +53,6 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
           </div>
         </div>
 
-        {/* 6 Key Stat Cards */}
         <div className="grid grid-cols-6 gap-3">
           {[
             { l: 'Safety Index', v: '94.2', u: '/100', c: 'text-emerald-400', sub: '+2.1% vs yesterday' },
@@ -72,9 +70,7 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
           ))}
         </div>
 
-        {/* 3-Column Layout */}
         <div className="grid grid-cols-3 gap-5">
-          {/* Column 1: AI Recommendations */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -106,7 +102,6 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
             ))}
           </div>
 
-          {/* Column 2: Key Indicators & Gauges */}
           <div className="space-y-3">
             <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
               <Gauge size={14} className="text-zinc-500" /> Live Parameter Telemetry
@@ -131,7 +126,6 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
             ))}
           </div>
 
-          {/* Column 3: Operational Activity Stream */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
@@ -172,7 +166,7 @@ export const CommandCenter: React.FC<{ tele: TelemetryPoint[]; onReportIncident?
 };
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 2: OPERATIONS INTELLIGENCE (Rich Executive BI View)
+// WORKSPACE 2: OPERATIONS INTELLIGENCE
 // ═══════════════════════════════════════════════════════════
 export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) => {
   const l = tele[tele.length - 1] || { vib: 11.8, temp: 94.1 };
@@ -191,7 +185,6 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
       </Toolbar>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        {/* Executive Greeting Header */}
         <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
           <div>
             <div className="flex items-center gap-2">
@@ -210,7 +203,6 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
           </div>
         </div>
 
-        {/* 6 Key Executive KPIs */}
         <div className="grid grid-cols-6 gap-3">
           {[
             { label: 'Safety Score Index', val: '94.2', sub: '/100 (+2.1%)', color: 'text-emerald-400' },
@@ -228,7 +220,6 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
           ))}
         </div>
 
-        {/* AI Executive Summary Briefing */}
         <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20 space-y-2">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-indigo-400" />
@@ -255,7 +246,6 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
           </div>
         </div>
 
-        {/* 30-Day Historical Trend Charts */}
         <div className="grid grid-cols-2 gap-5">
           <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04]">
             <div className="flex justify-between items-baseline mb-2">
@@ -280,9 +270,7 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
           </div>
         </div>
 
-        {/* Risk Contribution Breakdown & Operational Action Center */}
         <div className="grid grid-cols-2 gap-5">
-          {/* Risk Weight Breakdown */}
           <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
             <span className="text-sm font-bold text-white block">Plant Risk Contribution Breakdown</span>
             {[
@@ -304,7 +292,6 @@ export const OpsIntelligence: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) 
             ))}
           </div>
 
-          {/* Executive Action Center */}
           <div className="p-4 rounded-xl bg-white/[0.015] border border-white/[0.04] space-y-3">
             <span className="text-sm font-bold text-white block">Action Center — Immediate Items</span>
             {[
@@ -353,7 +340,7 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
         <ToolBtn active={chartMode === 'psi'} onClick={() => setChartMode('psi')}>Pressure</ToolBtn>
         <ToolBtn active={chartMode === 'kw'} onClick={() => setChartMode('kw')}>Power</ToolBtn>
         <div className="flex-1" />
-        <span className="text-[10px] text-emerald-400 font-medium flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Telemetry</span>
+        <span className="text-[10px] text-emerald-400 font-medium flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Telemetry Stream</span>
       </Toolbar>
 
       <div className="flex-1 flex overflow-hidden">
@@ -377,6 +364,35 @@ export const OperationsCenter: React.FC<{ tele: TelemetryPoint[] }> = ({ tele })
             <div className="flex-1 rounded-xl bg-white/[0.015] border border-white/[0.04] p-3">
               <Chart data={chartConfig.data} color={chartConfig.color} threshold={chartConfig.threshold} h={220} />
             </div>
+          </div>
+        </div>
+
+        {/* Right Inspector Sidebar: Equipment Fleet */}
+        <div className="w-72 border-l border-white/[0.04] bg-white/[0.01] flex flex-col shrink-0">
+          <div className="h-9 px-4 border-b border-white/[0.04] flex items-center justify-between">
+            <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Equipment Status</span>
+            <span className="text-[10px] text-zinc-600">47 Total</span>
+          </div>
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {[
+              { name: 'Pump P-102', health: 74, st: 'Warning', temp: l.temp, vib: l.vib },
+              { name: 'Valve V-88', health: 98, st: 'Locked', temp: '--', vib: '--' },
+              { name: 'HX-04', health: 91, st: 'Running', temp: '88', vib: '3.2' },
+              { name: 'Compressor C-03', health: 96, st: 'Running', temp: '72', vib: '4.1' },
+              { name: 'Boiler A', health: 93, st: 'Running', temp: '210', vib: '2.8' },
+              { name: 'Reactor B', health: 97, st: 'Running', temp: '340', vib: '1.9' },
+            ].map(eq => (
+              <div key={eq.name} className="p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] cursor-pointer transition-colors">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-white">{eq.name}</span>
+                  <span className={`w-2 h-2 rounded-full ${eq.health > 90 ? 'bg-emerald-400' : eq.health > 80 ? 'bg-amber-400' : 'bg-red-400'}`} />
+                </div>
+                <div className="flex justify-between text-[10px] text-zinc-500">
+                  <span>Health: {eq.health}%</span>
+                  <span className={eq.st === 'Warning' ? 'text-amber-400 font-semibold' : 'text-zinc-400'}>{eq.st}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -405,14 +421,14 @@ export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) =
       <Toolbar>
         <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INDUSTRIAL TWIN</span>
         <ToolSep />
-        <span className="text-[10px] text-zinc-500">Reactor Complex B Schematic</span>
+        <span className="text-[10px] text-zinc-500">Reactor Complex B CAD/SCADA Interactive Schematic</span>
       </Toolbar>
 
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 relative bg-[#0b0b0f]">
           <svg viewBox="0 0 800 460" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
             {[[240,150,380,200],[460,200,580,140],[400,240,380,320],[180,190,160,290],[430,340,580,320]].map(([x1,y1,x2,y2], i) => (
-              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(99,102,241,0.1)" strokeWidth="2" strokeDasharray="8,6" />
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(99,102,241,0.15)" strokeWidth="2" strokeDasharray="8,6" />
             ))}
             {assets.map(a => {
               const s = selected === a.id;
@@ -429,16 +445,30 @@ export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) =
         </div>
 
         {sel && (
-          <div className="w-72 border-l border-white/[0.04] p-4 bg-white/[0.01] space-y-4">
+          <div className="w-80 border-l border-white/[0.04] p-4 bg-white/[0.01] space-y-4 overflow-y-auto">
             <div>
               <p className="text-[10px] text-zinc-500 uppercase">Selected Equipment</p>
               <h2 className="text-base font-bold text-white mt-0.5">{sel.label}</h2>
-              <span className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full ${sel.st === 'Warning' ? 'bg-amber-500/15 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'}`}>{sel.st}</span>
+              <span className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full ${sel.st === 'Warning' ? 'bg-amber-500/15 text-amber-400 font-semibold' : 'bg-emerald-500/10 text-emerald-400'}`}>{sel.st}</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Metric label="Health" value={`${sel.health}%`} small />
-              <Metric label="RUL" value={sel.rul} small />
+              <Metric label="Health Score" value={`${sel.health}%`} small />
+              <Metric label="RUL Forecast" value={sel.rul} accent={sel.rul === '18d' ? 'text-amber-400' : undefined} small />
+              <Metric label="Temperature" value={sel.temp} small />
+              <Metric label="Status" value={sel.st} small />
             </div>
+
+            {selected === 'pump' && (
+              <div className="p-3.5 rounded-xl bg-indigo-600/10 border border-indigo-500/20 space-y-2">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles size={14} className="text-indigo-400" />
+                  <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider">PINN Neural Model Failure Analysis</span>
+                </div>
+                <p className="text-[11px] text-zinc-300 leading-relaxed">
+                  Bearing outer race wear probability: <strong>72%</strong>. RUL estimate: 18 days. Lubrication service interval was exceeded by 14 days under thermal load.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -452,9 +482,9 @@ export const IndustrialTwin: React.FC<{ tele: TelemetryPoint[] }> = ({ tele }) =
 export const AICommandCenter: React.FC = () => {
   const steps = [
     { text: 'Detected vibration anomaly on Pump P-102', status: 'done', detail: 'Reading 11.8 mm/s, trending toward ISO limit.' },
-    { text: 'Queried CMMS maintenance history', status: 'done', detail: 'PM overdue by 14 days. Work order WO-7821 un-escalated.' },
-    { text: 'Calculated bearing wear probability', status: 'done', detail: 'PINN digital twin predicts 72% wear probability. RUL: 18 days.' },
-    { text: 'Verified PTW-8902 isolation lock', status: 'done', detail: 'Valve V-88 isolation locked. No conflicts.' },
+    { text: 'Queried CMMS maintenance history from PostgreSQL', status: 'done', detail: 'PM overdue by 14 days. Work order WO-7821 un-escalated.' },
+    { text: 'Calculated bearing wear probability in Digital Twin', status: 'done', detail: 'PINN model predicts 72% wear probability. RUL: 18 days.' },
+    { text: 'Verified PTW-8902 LOTO isolation lock on Valve V-88', status: 'done', detail: 'Physical gate valve lock confirmed. Zero safety conflicts.' },
     { text: 'Synthesizing corrective action plan (CAPA)', status: 'active', detail: '4 actions generated for maintenance crew.' },
   ];
 
@@ -469,20 +499,37 @@ export const AICommandCenter: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 p-5 space-y-4 overflow-y-auto">
           <div className="p-4 rounded-xl bg-indigo-600/10 border border-indigo-500/20">
-            <h2 className="text-sm font-bold text-white">Active Reasoning: Pump P-102 Anomaly</h2>
-            <p className="text-xs text-zinc-400 mt-1">Multi-agent supervisor is conducting 5-Whys RCA and evidence correlation.</p>
+            <h2 className="text-sm font-bold text-white">Active Reasoning Stream: Pump P-102 Anomaly</h2>
+            <p className="text-xs text-zinc-400 mt-1">Multi-agent supervisor is conducting 5-Whys RCA, evidence correlation, and ISO 45001 compliance audit.</p>
           </div>
           <div className="space-y-2">
             {steps.map((s, i) => (
-              <div key={i} className="flex gap-3 py-2 px-3 rounded-lg bg-white/[0.02]">
-                <CheckCircle2 size={16} className={s.status === 'done' ? 'text-emerald-400' : 'text-indigo-400'} />
+              <div key={i} className="flex gap-3 py-3 px-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                <CheckCircle2 size={16} className={s.status === 'done' ? 'text-emerald-400 mt-0.5' : 'text-indigo-400 mt-0.5'} />
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-200">{s.text}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">{s.detail}</p>
+                  <p className="text-[13px] font-semibold text-zinc-200">{s.text}</p>
+                  <p className="text-[12px] text-zinc-500 mt-0.5">{s.detail}</p>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="w-80 border-l border-white/[0.04] p-4 bg-white/[0.01] space-y-4">
+          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block">Agent DAG Status</span>
+          {[
+            { n: 'Supervisor', r: 'Orchestrator', s: 'active' },
+            { n: 'Inspection', r: 'Vision Audit', s: 'done' },
+            { n: 'Risk Assessment', r: '5×5 Matrix', s: 'done' },
+            { n: 'Permit', r: 'PTW Isolation', s: 'done' },
+            { n: 'Maintenance', r: 'Digital Twin', s: 'active' },
+            { n: 'Incident', r: 'Root Cause', s: 'done' },
+          ].map(a => (
+            <div key={a.n} className="flex items-center justify-between text-xs">
+              <span className="text-zinc-300">{a.n}</span>
+              <span className={`text-[10px] font-semibold ${a.s === 'active' ? 'text-indigo-400' : 'text-emerald-400'}`}>{a.s === 'active' ? '● Running' : '✓ Done'}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -495,20 +542,52 @@ export const AICommandCenter: React.FC = () => {
 export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = ({ onReportIncident }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
     <Toolbar>
-      <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INCIDENTS & HAZARDS</span>
+      <span className="text-[11px] font-semibold text-zinc-300 tracking-wider">INCIDENTS & HAZARD INVESTIGATION</span>
       <div className="flex-1" />
       <ToolBtn onClick={onReportIncident} className="!bg-red-600/80 !text-white">
         <Plus size={12} /> Report Incident
       </ToolBtn>
     </Toolbar>
-    <div className="flex-1 p-5 space-y-4 overflow-y-auto">
-      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-        <div className="flex justify-between">
-          <span className="text-xs font-mono text-zinc-500">INC-2026-0447</span>
-          <span className="text-xs text-amber-400 font-medium">Under Investigation</span>
+    <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 p-5 space-y-4 overflow-y-auto">
+        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-mono text-zinc-500">INC-2026-0447</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Under Investigation</span>
+          </div>
+          <h2 className="text-base font-bold text-white">Pump P-102 Vibration Anomaly & PPE Non-Compliance</h2>
+          <p className="text-xs text-zinc-400 mt-1">Assigned: EHS Safety Team • SLA Remaining: <span className="text-amber-400 font-semibold">01:42:10</span></p>
+
+          <div className="mt-4 pt-3 border-t border-white/[0.04] space-y-2">
+            <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">5-Whys Root Cause Analysis:</h3>
+            {[
+              { q: 'Why did Pump P-102 trip?', a: 'Vibration velocity reached 11.8 mm/s.' },
+              { q: 'Why was vibration elevated?', a: 'Bearing outer race wear misalignment.' },
+              { q: 'Why was bearing worn?', a: 'Lubrication breakdown under thermal load.' },
+              { q: 'Why did lubrication fail?', a: 'PM interval was exceeded by 14 days due to un-escalated WO-7821.' },
+            ].map((w, i) => (
+              <div key={i} className="text-xs p-2 rounded bg-white/[0.015]">
+                <span className="font-semibold text-zinc-300">{i + 1}. {w.q}</span>
+                <span className="text-zinc-400 ml-2">{w.a}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <h2 className="text-sm font-bold text-white mt-1">Pump P-102 Vibration Excursion</h2>
-        <p className="text-xs text-zinc-400 mt-1">5-Whys Root Cause: PM overdue by 14 days led to bearing lubrication failure.</p>
+      </div>
+
+      <div className="w-80 border-l border-white/[0.04] p-4 bg-white/[0.01] space-y-3">
+        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block">Corrective Actions (CAPA)</span>
+        {[
+          { a: 'Replace bearing assembly P-102', o: 'Mech Team', d: '24h', s: 'In Progress' },
+          { a: 'Recalibrate vibration probe VP-102', o: 'I&C Team', d: '48h', s: 'Assigned' },
+          { a: 'Configure PM auto-escalation in CMMS', o: 'CMMS Admin', d: '7d', s: 'Pending' },
+          { a: 'Zone B contractor badge audit', o: 'EHS Team', d: '24h', s: 'Completed' },
+        ].map((c, i) => (
+          <div key={i} className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-xs">
+            <span className="font-medium text-white block">{c.a}</span>
+            <span className="text-[10px] text-zinc-500">{c.o} • Due: {c.d} • {c.s}</span>
+          </div>
+        ))}
       </div>
     </div>
   </div>
@@ -520,29 +599,29 @@ export const IncidentsWorkspace: React.FC<{ onReportIncident?: () => void }> = (
 export const PermitsWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
     <Toolbar>
-      <span className="text-[11px] font-semibold text-zinc-300">SAFE WORK PERMITS</span>
+      <span className="text-[11px] font-semibold text-zinc-300">SAFE WORK PERMITS (PTW / LOTO)</span>
       <ToolSep />
-      <ToolBtn active>28 Active LOTO</ToolBtn>
+      <ToolBtn active>28 Active Permits</ToolBtn>
       <div className="flex-1" />
-      <ToolBtn className="!bg-indigo-600 !text-white"><Plus size={12} /> Issue PTW</ToolBtn>
+      <ToolBtn className="!bg-indigo-600 !text-white"><Plus size={12} /> Issue Safe Work Permit</ToolBtn>
     </Toolbar>
-    <div className="flex-1 p-5 space-y-4 overflow-y-auto">
-      <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider">
+    <div className="flex-1 p-5 space-y-3 overflow-y-auto">
+      <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
         <span className="w-24">Permit ID</span><span className="flex-1">Description</span><span className="w-24">Type</span><span className="w-28">Isolation</span><span className="w-24">Gas Test</span><span className="w-20">Status</span>
       </div>
       {[
-        { id: 'PTW-8902', desc: 'Hot Work — Tank T-204', type: 'Hot Work', iso: 'V-88 LOCKED', gas: 'O₂ 20.9%', st: 'Approved' },
-        { id: 'PTW-8903', desc: 'Confined Entry — Vessel V-109', type: 'Confined', iso: 'LINE BLIND', gas: 'Pending', st: 'Hold' },
-        { id: 'PTW-8904', desc: 'Electrical — Panel MCC-7B', type: 'Electrical', iso: 'RACKED OUT', gas: 'N/A', st: 'Approved' },
-        { id: 'PTW-8905', desc: 'Excavation — Pipe Trench B', type: 'Excavation', iso: 'N/A', gas: 'N/A', st: 'Pending' },
+        { id: 'PTW-8902', desc: 'Hot Work — Tank T-204 Isolation Lock', type: 'Hot Work', iso: 'V-88 LOCKED', gas: 'O₂ 20.9%', st: 'Approved' },
+        { id: 'PTW-8903', desc: 'Confined Entry — Vessel V-109 Cleaning', type: 'Confined', iso: 'LINE BLIND', gas: 'Pending', st: 'Hold' },
+        { id: 'PTW-8904', desc: 'Electrical Maintenance — Panel MCC-7B', type: 'Electrical', iso: 'RACKED OUT', gas: 'N/A', st: 'Approved' },
+        { id: 'PTW-8905', desc: 'Excavation — Pipe Trench Line B', type: 'Excavation', iso: 'N/A', gas: 'N/A', st: 'Pending' },
       ].map(p => (
-        <div key={p.id} className="h-10 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
-          <span className="w-24 text-indigo-400 font-medium font-mono text-[11px]">{p.id}</span>
-          <span className="flex-1 text-zinc-300">{p.desc}</span>
-          <span className="w-24 text-zinc-500">{p.type}</span>
-          <span className="w-28 text-zinc-500">{p.iso}</span>
-          <span className="w-24 text-zinc-500">{p.gas}</span>
-          <span className="w-20"><span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${p.st === 'Approved' ? 'bg-emerald-500/10 text-emerald-400' : p.st === 'Hold' ? 'bg-amber-500/15 text-amber-400' : 'bg-zinc-800 text-zinc-400'}`}>{p.st}</span></span>
+        <div key={p.id} className="h-11 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
+          <span className="w-24 text-indigo-400 font-semibold font-mono text-[11px]">{p.id}</span>
+          <span className="flex-1 text-zinc-200 font-medium">{p.desc}</span>
+          <span className="w-24 text-zinc-400">{p.type}</span>
+          <span className="w-28 text-zinc-400 font-mono text-[11px]">{p.iso}</span>
+          <span className="w-24 text-zinc-400">{p.gas}</span>
+          <span className="w-20"><span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${p.st === 'Approved' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>{p.st}</span></span>
         </div>
       ))}
     </div>
@@ -550,13 +629,13 @@ export const PermitsWorkspace: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// WORKSPACE 8: MAINTENANCE
+// WORKSPACE 8: MAINTENANCE WORKFLOW
 // ═══════════════════════════════════════════════════════════
 export const MaintenanceWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">MAINTENANCE WORKFLOW</span></Toolbar>
-    <div className="flex-1 p-5 space-y-4 overflow-y-auto">
-      <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider">
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">PREDICTIVE MAINTENANCE WORKFLOW</span></Toolbar>
+    <div className="flex-1 p-5 space-y-3 overflow-y-auto">
+      <div className="h-8 flex items-center px-4 gap-2 bg-white/[0.01] border-b border-white/[0.04] text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
         <span className="w-24">WO ID</span><span className="flex-1">Description</span><span className="w-24">Asset</span><span className="w-16">Priority</span><span className="w-16">RUL</span><span className="w-20">Status</span>
       </div>
       {[
@@ -565,13 +644,13 @@ export const MaintenanceWorkspace: React.FC = () => (
         { id: 'WO-7823', desc: 'Quarterly compressor inspection', asset: 'C-03', pri: 'Medium', rul: '84d', st: 'Scheduled' },
         { id: 'WO-7824', desc: 'Boiler tube thickness measurement', asset: 'Boiler A', pri: 'Medium', rul: '71d', st: 'Scheduled' },
       ].map(w => (
-        <div key={w.id} className="h-10 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
-          <span className="w-24 text-indigo-400 font-medium font-mono text-[11px]">{w.id}</span>
-          <span className="flex-1 text-zinc-300">{w.desc}</span>
-          <span className="w-24 text-zinc-500">{w.asset}</span>
-          <span className="w-16"><span className={`text-[10px] font-medium ${w.pri === 'Critical' ? 'text-red-400' : 'text-amber-400'}`}>{w.pri}</span></span>
-          <span className="w-16 text-amber-400">{w.rul}</span>
-          <span className="w-20"><span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${w.st === 'Overdue' ? 'bg-red-500/15 text-red-400' : 'bg-indigo-500/15 text-indigo-400'}`}>{w.st}</span></span>
+        <div key={w.id} className="h-11 flex items-center px-4 gap-2 text-[12px] hover:bg-white/[0.02] cursor-pointer transition-colors border-b border-white/[0.02]">
+          <span className="w-24 text-indigo-400 font-semibold font-mono text-[11px]">{w.id}</span>
+          <span className="flex-1 text-zinc-200 font-medium">{w.desc}</span>
+          <span className="w-24 text-zinc-400">{w.asset}</span>
+          <span className="w-16"><span className={`text-[10px] font-bold ${w.pri === 'Critical' ? 'text-red-400' : 'text-amber-400'}`}>{w.pri}</span></span>
+          <span className="w-16 text-amber-400 font-semibold">{w.rul}</span>
+          <span className="w-20"><span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${w.st === 'Overdue' ? 'bg-red-500/15 text-red-400' : 'bg-indigo-500/15 text-indigo-400'}`}>{w.st}</span></span>
         </div>
       ))}
     </div>
@@ -583,21 +662,21 @@ export const MaintenanceWorkspace: React.FC = () => (
 // ═══════════════════════════════════════════════════════════
 export const RiskWorkspace: React.FC = () => (
   <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">RISK ASSESSMENT</span></Toolbar>
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">INDUSTRIAL RISK MATRIX & REGISTER</span></Toolbar>
     <div className="p-5 flex gap-6">
       <div className="flex-1">
-        <p className="text-[11px] text-zinc-400 font-medium mb-3">5×5 Industrial Risk Assessment Matrix</p>
+        <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-wider mb-3">5×5 Risk Assessment Matrix</p>
         <div className="grid grid-cols-6 gap-px bg-white/[0.04] rounded-xl overflow-hidden">
-          <div className="bg-[#09090b] p-2" />{['Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'].map(h => <div key={h} className="bg-[#0d0d12] p-2 text-[9px] text-zinc-500 text-center">{h}</div>)}
+          <div className="bg-[#09090b] p-2" />{['Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'].map(h => <div key={h} className="bg-[#0d0d12] p-2 text-[9px] text-zinc-500 text-center font-bold">{h}</div>)}
           {['Catastrophic', 'Major', 'Moderate', 'Minor', 'Insignificant'].map((sev, si) => (
             <React.Fragment key={sev}>
-              <div className="bg-[#0d0d12] p-2 text-[9px] text-zinc-500 text-right">{sev}</div>
+              <div className="bg-[#0d0d12] p-2 text-[9px] text-zinc-500 text-right font-bold">{sev}</div>
               {[1,2,3,4,5].map(li => {
                 const risk = (5 - si) * li;
                 const isHighlighted = si === 1 && li === 3;
                 return (
-                  <div key={li} className={`p-2 text-center text-[11px] font-medium ${risk > 15 ? 'bg-red-500/10 text-red-400' : risk > 10 ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/5 text-emerald-400/60'} ${isHighlighted ? 'ring-1 ring-indigo-500' : ''}`}>
-                    {risk}{isHighlighted && <span className="block text-[8px] text-indigo-400">P-102</span>}
+                  <div key={li} className={`p-2 text-center text-[11px] font-bold ${risk > 15 ? 'bg-red-500/15 text-red-400' : risk > 10 ? 'bg-amber-500/15 text-amber-400' : 'bg-emerald-500/5 text-emerald-400/60'} ${isHighlighted ? 'ring-2 ring-indigo-500' : ''}`}>
+                    {risk}{isHighlighted && <span className="block text-[8px] text-indigo-300">P-102</span>}
                   </div>
                 );
               })}
@@ -610,42 +689,119 @@ export const RiskWorkspace: React.FC = () => (
 );
 
 // ═══════════════════════════════════════════════════════════
-// OTHER WORKSPACES
+// WORKSPACE 10: VISION INTELLIGENCE
 // ═══════════════════════════════════════════════════════════
 export const VisionIntelligence: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">VISION INTELLIGENCE</span></Toolbar><div className="p-5 text-xs text-zinc-400">4-Camera YOLOv8 Inference Grid Operational</div></div>
-);
-
-export const AgentOrchestration: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">AGENT ORCHESTRATION</span></Toolbar><div className="p-5 text-xs text-zinc-400">10-Agent Execution Trace & Memory DAG</div></div>
-);
-
-export const AssetsWorkspace: React.FC<{ tele: TelemetryPoint[]; onAddAsset?: () => void }> = ({ onAddAsset }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar>
-      <span className="text-[11px] font-semibold text-zinc-300">ASSETS WORKSPACE</span>
-      <div className="flex-1" />
-      <ToolBtn onClick={onAddAsset} className="!bg-indigo-600 !text-white"><Plus size={12} /> Add Asset</ToolBtn>
-    </Toolbar>
-    <div className="p-5 text-xs text-zinc-400">IBM Maximo Asset Management Grid (47 Monitored Assets)</div>
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">VISION INTELLIGENCE (YOLOv8 EDGE)</span></Toolbar>
+    <div className="p-5 grid grid-cols-2 gap-4">
+      {[
+        { cam: 'CAM-001', loc: 'Main Assembly Line', det: 'PPE Verified — 3 Workers', ok: true },
+        { cam: 'CAM-002', loc: 'Reactor B North', det: 'NO HELMET — Restricted Zone', ok: false },
+        { cam: 'CAM-003', loc: 'Boiler Room A', det: 'Thermal 62°C Nominal', ok: true },
+        { cam: 'CAM-004', loc: 'Loading Bay North', det: 'Forklift Proximity Safe', ok: true },
+      ].map(c => (
+        <div key={c.cam} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-bold text-white">{c.cam} — {c.loc}</span>
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.ok ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/15 text-red-400 animate-pulse'}`}>{c.ok ? 'CLEAR' : 'VIOLATION'}</span>
+          </div>
+          <p className="text-xs text-zinc-400">{c.det}</p>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
-export const PlatformOps: React.FC<{ health: HealthStatus }> = ({ health }) => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">PLATFORM OPERATIONS</span></Toolbar><div className="p-5 text-xs text-zinc-400">AWS Infrastructure Observability: {health.status} ({health.lat}ms)</div></div>
+// ═══════════════════════════════════════════════════════════
+// WORKSPACE 11: AGENT ORCHESTRATION
+// ═══════════════════════════════════════════════════════════
+export const AgentOrchestration: React.FC = () => (
+  <div className="h-full flex flex-col bg-[#09090b]">
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">10-AGENT MULTI-AGENT DAG ORCHESTRATION</span></Toolbar>
+    <div className="p-5 space-y-2 overflow-y-auto">
+      {[
+        { n: 'Supervisor Agent', r: 'Orchestrator', lat: '12ms', conf: '99%', s: 'Running' },
+        { n: 'Inspection Agent', r: 'Vision Audit', lat: '24ms', conf: '96%', s: 'Done' },
+        { n: 'Risk Assessment Agent', r: '5×5 Matrix', lat: '18ms', conf: '97%', s: 'Done' },
+        { n: 'Permit Agent', r: 'PTW Isolation', lat: '15ms', conf: '98%', s: 'Done' },
+        { n: 'Maintenance Agent', r: 'Digital Twin & RUL', lat: '32ms', conf: '94%', s: 'Running' },
+      ].map((a, i) => (
+        <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-xs">
+          <div><span className="font-bold text-white">{a.n}</span><span className="text-zinc-500 ml-2">({a.r})</span></div>
+          <div className="flex gap-4 text-zinc-400"><span>Latency: {a.lat}</span><span>Confidence: {a.conf}</span><span className="text-indigo-400 font-semibold">{a.s}</span></div>
+        </div>
+      ))}
+    </div>
+  </div>
 );
 
+// ═══════════════════════════════════════════════════════════
+// WORKSPACE 12: ASSETS WORKSPACE
+// ═══════════════════════════════════════════════════════════
+export const AssetsWorkspace: React.FC<{ tele: TelemetryPoint[]; onAddAsset?: () => void }> = ({ onAddAsset }) => (
+  <div className="h-full flex flex-col bg-[#09090b]">
+    <Toolbar>
+      <span className="text-[11px] font-semibold text-zinc-300">ASSET REGISTRY (IBM MAXIMO FLEET)</span>
+      <div className="flex-1" />
+      <ToolBtn onClick={onAddAsset} className="!bg-indigo-600 !text-white"><Plus size={12} /> Add Asset</ToolBtn>
+    </Toolbar>
+    <div className="p-5 space-y-3 overflow-y-auto">
+      {[
+        { name: 'Pump P-102', loc: 'DC-101 Recirc', health: 74, rul: '18d', st: 'Warning' },
+        { name: 'Valve V-88', loc: 'DC-101 Isol', health: 98, rul: 'N/A', st: 'Locked' },
+        { name: 'Heat Exchanger HX-04', loc: 'DC-101 Cool', health: 91, rul: '62d', st: 'Running' },
+        { name: 'Compressor C-03', loc: 'DC-102', health: 96, rul: '84d', st: 'Running' },
+      ].map(as => (
+        <div key={as.name} className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04] text-xs">
+          <div><span className="font-bold text-white">{as.name}</span><span className="text-zinc-500 ml-3">{as.loc}</span></div>
+          <div className="flex gap-6"><span className={as.health < 80 ? 'text-amber-400 font-bold' : 'text-emerald-400'}>Health: {as.health}%</span><span className="text-zinc-400">RUL: {as.rul}</span><span className="text-indigo-400 font-semibold">{as.st}</span></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════
+// WORKSPACE 13: PLATFORM OPERATIONS
+// ═══════════════════════════════════════════════════════════
+export const PlatformOps: React.FC<{ health: HealthStatus }> = ({ health }) => (
+  <div className="h-full flex flex-col bg-[#09090b]">
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">PLATFORM OPERATIONS (AWS OBSERVABILITY)</span></Toolbar>
+    <div className="p-5 grid grid-cols-4 gap-4">
+      {[
+        { svc: 'Application Load Balancer', name: 'prahari-alb-hackathon', lat: `${health.lat}ms`, st: health.status },
+        { svc: 'ECS Fargate Cluster', name: 'prahari-hackathon-cluster', lat: '1 Task Active', st: 'Running' },
+        { svc: 'RDS PostgreSQL', name: 'prahari-postgres-hackathon', lat: 'v15.7 Engine', st: 'Healthy' },
+        { svc: 'ElastiCache Redis', name: 'prahari-redis-hackathon', lat: 'Pub/Sub Stream', st: 'Healthy' },
+      ].map(s => (
+        <div key={s.svc} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+          <h3 className="text-xs font-bold text-white">{s.svc}</h3>
+          <p className="text-[10px] text-zinc-500 mt-0.5">{s.name}</p>
+          <div className="flex justify-between items-center mt-3 text-xs">
+            <span className="text-zinc-400">{s.lat}</span>
+            <span className="text-emerald-400 font-bold">{s.st}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════
+// OTHER WORKSPACES
+// ═══════════════════════════════════════════════════════════
 export const InspectionsWorkspace: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">INSPECTIONS</span></Toolbar><div className="p-5 text-xs text-zinc-400">Compliance Audit Checklists</div></div>
+  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">INSPECTIONS AUDIT CHECKLISTS</span></Toolbar><div className="p-5 text-xs text-zinc-400">122 Compliance Audits Passed This Month</div></div>
 );
 
 export const ExecutiveInsights: React.FC = () => (
-  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">EXECUTIVE INSIGHTS</span></Toolbar><div className="p-5 text-xs text-zinc-400">ISO 45001 & OSHA Audit Reports</div></div>
+  <div className="h-full flex flex-col bg-[#09090b]"><Toolbar><span className="text-[11px] font-semibold text-zinc-300">EXECUTIVE COMPLIANCE INSIGHTS</span></Toolbar><div className="p-5 text-xs text-zinc-400">ISO 45001 & OSHA Documentation Verified</div></div>
 );
 
 export const SettingsWorkspace: React.FC<{ session?: UserSession }> = ({ session }) => (
   <div className="h-full flex flex-col bg-[#09090b]">
-    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">SETTINGS</span></Toolbar>
+    <Toolbar><span className="text-[11px] font-semibold text-zinc-300">SETTINGS & TENANT CONFIGURATION</span></Toolbar>
     <div className="p-5 text-xs text-zinc-400">Organization: {session?.orgName || 'Alpha Chemical Refinery Inc.'} ({session?.role})</div>
   </div>
 );
