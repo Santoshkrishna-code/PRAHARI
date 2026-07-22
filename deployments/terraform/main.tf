@@ -270,7 +270,7 @@ resource "aws_db_instance" "postgres" {
   allocated_storage      = 20
   storage_type           = "gp3"
   engine                 = "postgres"
-  engine_version         = "15.4"
+  engine_version         = "15.7"
   instance_class         = "db.t4g.micro"
   db_name                = "prahari_db"
   username               = "postgres"
@@ -318,11 +318,19 @@ resource "aws_secretsmanager_secret_version" "app_secrets_val" {
 }
 
 # ------------------------------------------------------------------------------
-# 7. Frontend Static Web Hosting (S3 + CloudFront)
+# 7. Frontend Static Web Hosting (S3 Website)
 # ------------------------------------------------------------------------------
 resource "aws_s3_bucket" "frontend" {
   bucket        = "prahari-hackathon-frontend-${var.environment}"
   force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "frontend" {
+  bucket                  = aws_s3_bucket.frontend.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_website_configuration" "frontend" {
@@ -337,12 +345,9 @@ resource "aws_s3_bucket_website_configuration" "frontend" {
   }
 }
 
-resource "aws_cloudfront_origin_access_identity" "oai" {
-  comment = "OAI for Prahari S3 Frontend"
-}
-
 resource "aws_s3_bucket_policy" "frontend_policy" {
-  bucket = aws_s3_bucket.frontend.id
+  bucket     = aws_s3_bucket.frontend.id
+  depends_on = [aws_s3_bucket_public_access_block.frontend]
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -358,51 +363,51 @@ resource "aws_s3_bucket_policy" "frontend_policy" {
   })
 }
 
-resource "aws_cloudfront_distribution" "frontend" {
-  origin {
-    domain_name = aws_s3_bucket_website_configuration.frontend.website_endpoint
-    origin_id   = "S3-Frontend"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
-  enabled             = true
-  is_ipv6_enabled     = true
-  default_root_object = "index.html"
-
-  default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "S3-Frontend"
-
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
-  }
-}
+# resource "aws_cloudfront_distribution" "frontend" {
+#   origin {
+#     domain_name = aws_s3_bucket_website_configuration.frontend.website_endpoint
+#     origin_id   = "S3-Frontend"
+# 
+#     custom_origin_config {
+#       http_port              = 80
+#       https_port             = 443
+#       origin_protocol_policy = "http-only"
+#       origin_ssl_protocols   = ["TLSv1.2"]
+#     }
+#   }
+# 
+#   enabled             = true
+#   is_ipv6_enabled     = true
+#   default_root_object = "index.html"
+# 
+#   default_cache_behavior {
+#     allowed_methods  = ["GET", "HEAD"]
+#     cached_methods   = ["GET", "HEAD"]
+#     target_origin_id = "S3-Frontend"
+# 
+#     forwarded_values {
+#       query_string = false
+#       cookies {
+#         forward = "none"
+#       }
+#     }
+# 
+#     viewer_protocol_policy = "redirect-to-https"
+#     min_ttl                = 0
+#     default_ttl            = 3600
+#     max_ttl                = 86400
+#   }
+# 
+#   restrictions {
+#     geo_restriction {
+#       restriction_type = "none"
+#     }
+#   }
+# 
+#   viewer_certificate {
+#     cloudfront_default_certificate = true
+#   }
+# }
 
 # ------------------------------------------------------------------------------
 # 8. IAM Execution & Task Roles
@@ -530,7 +535,7 @@ resource "aws_ecs_task_definition" "ai_platform" {
     }]
     environment = [
       { name = "APP_ENV", value = "production" },
-      { name = "DATABASE_URL", value = "postgresql+asyncpg://postgres:${var.db_password}@${aws_db_instance.postgres.endpoint}/prahari_db" },
+      { name = "DATABASE_URL", value = "postgresql+asyncpg://postgres:${var.db_password}@${aws_db_instance.postgres.address}:${aws_db_instance.postgres.port}/prahari_db" },
       { name = "REDIS_HOST", value = aws_elasticache_cluster.redis.cache_nodes[0].address },
       { name = "REDIS_PORT", value = "6379" }
     ]
@@ -553,9 +558,9 @@ resource "aws_ecs_service" "ai_platform" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+    subnets          = [aws_subnet.public_a.id, aws_subnet.public_b.id]
     security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {

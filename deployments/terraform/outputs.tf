@@ -1,6 +1,6 @@
 output "cloudfront_domain_name" {
-  description = "CloudFront distribution domain name for React web frontend"
-  value       = aws_cloudfront_distribution.frontend.domain_name
+  description = "S3 Static Website Domain Endpoint for React web frontend"
+  value       = aws_s3_bucket_website_configuration.frontend.website_endpoint
 }
 
 output "alb_dns_name" {

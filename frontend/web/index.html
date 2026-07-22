@@ -1,11 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PRAHARI Enterprise Web Portal</title>
+    <title>PRAHARI ICS v19.0 — Enterprise Industrial AI Safety Operating System</title>
+    <meta name="description" content="PRAHARI Enterprise Industrial AI Safety Operating System — Real-time plant monitoring, 10-agent multi-agent supervisor, edge vision AI, digital twin analytics, and incident command center." />
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['JetBrains Mono', 'monospace']
+            }
+          }
+        }
+      }
+    </script>
+    <script>
+      // API Base URL — set from environment or default to ALB
+      window.__PRAHARI_API__ = 'http://prahari-alb-hackathon-125438813.us-east-1.elb.amazonaws.com';
+    </script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+      body {
+        font-family: 'JetBrains Mono', monospace;
+        background-color: #060910;
+        color: #e2e8f0;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.45); }
+    </style>
   </head>
-  <body class="bg-background text-text transition-colors duration-200">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

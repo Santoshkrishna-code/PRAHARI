@@ -16,11 +16,14 @@ RUN pip install --no-cache-dir \
     fastapi>=0.115.0 \
     uvicorn>=0.30.0 \
     pydantic>=2.9.0 \
+    pydantic-settings>=2.5.0 \
     sqlalchemy>=2.0.35 \
     asyncpg>=0.29.0 \
     aiosqlite>=0.20.0 \
+    redis>=5.0.0 \
     httpx>=0.27.0 \
-    pytest>=8.0.0
+    pytest>=8.0.0 \
+    structlog>=24.0.0
 
 FROM python:3.13-slim AS runner
 

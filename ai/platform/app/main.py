@@ -138,6 +138,15 @@ app.add_middleware(TelemetryContextMiddleware)
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(RequestIdMiddleware)
 
+# CORS middleware for S3-hosted frontend
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Register Exception Handlers mapping Domain exceptions to RFC 7807 Standard Responses
 @app.exception_handler(BasePlatformException)

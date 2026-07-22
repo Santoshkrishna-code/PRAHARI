@@ -3,13 +3,14 @@ FROM golang:1.24-alpine AS builder
 
 WORKDIR /workspace
 
-# Copy Go workspace files and shared dependencies
-COPY go.work go.work.sum ./
+# Copy Go shared package dependencies and gateway service source
 COPY shared/ shared/
 COPY services/gateway-service/ services/gateway-service/
 
-# Download Go modules and build static binary
+# Disable monorepo workspace resolution during isolated container build
 WORKDIR /workspace/services/gateway-service
+ENV GOWORK=off
+
 RUN go mod download || true
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /workspace/bin/gateway-service .
 
